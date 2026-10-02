@@ -1,0 +1,36 @@
+name: Update Taiwan Stock Portfolio
+
+on:
+  schedule:
+    # 台灣時間週一至週五 14:00 (UTC 06:00) 盤後自動執行更新
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch: # 支援在 GitHub 網頁手動一鍵點擊執行
+
+permissions:
+  contents: write
+
+jobs:
+  update-portfolio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Fugle Update Script
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
+        run: |
+          python update_fugle.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add portfolio.json
+          git diff --staged --quiet || git commit -m "Auto-update portfolio via Fugle API [$(date +'%Y-%m-%d %H:%M:%S')]"
+          git push origin main

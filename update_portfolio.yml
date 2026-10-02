@@ -1,0 +1,37 @@
+name: Update Portfolio via Fugle API
+
+on:
+  schedule:
+    # 台灣時間週一至週五 14:00 (UTC 06:00) 自動執行盤後更新
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch: # 支援在 GitHub 介面手動隨時點擊觸發
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Fugle Update Script
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
+        run: |
+          python update_fugle.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add portfolio.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update portfolio data via Fugle API" && git push)

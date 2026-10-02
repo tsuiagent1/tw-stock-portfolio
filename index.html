@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>崔董專屬 — 台股投資組合與即時風控儀表板</title>
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #121826;
+      --bg-card: #182234;
+      --bg-hover: #1f2c42;
+      --text-main: #f0f4fc;
+      --text-muted: #8c9eb5;
+      --border-color: #24334a;
+      --profit-red: #ff4d4f; /* 台股紅漲 */
+      --loss-green: #2ecc71; /* 台股綠跌 */
+      --neutral-blue: #3b82f6;
+      --warning-amber: #f59e0b;
+      --danger-crimson: #ef4444;
+      --card-radius: 12px;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* 頂部 Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .brand-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-api {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #60a5fa;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-api::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: var(--bg-hover);
+      border-color: #3b82f6;
+    }
+
+    /* 總覽指標卡片 Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: #384d6b;
+    }
+
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .val-profit { color: var(--profit-red) !important; }
+    .val-loss { color: var(--loss-green) !important; }
+
+    /* 風控警示橫幅 */
+    .alert-banner {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--card-radius);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      line-height: 1;
+      padding-top: 2px;
+    }
+
+    .alert-content h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f87171;
+      margin-bottom: 4px;
+    }
+
+    .alert-content p {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* 圖表與資產配置分析區 */
+    .section-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* 權重長條條列 */
+    .weight-bar-item {
+      margin-bottom: 12px;
+    }
+
+    .weight-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .weight-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .weight-percent {
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progress-track {
+      background: var(--bg-primary);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* 風控診斷清單 */
+    .diagnosis-item {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border-left: 4px solid var(--neutral-blue);
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .diagnosis-item.danger {
+      border-left-color: var(--danger-crimson);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .diagnosis-item.warning {
+      border-left-color: var(--warning-amber);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .diagnosis-item.healthy {
+      border-left-color: var(--neutral-blue);
+    }
+
+    .diagnosis-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 持股明細表格 */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }
+
+    tr:hover td {
+      background: var(--bg-hover);
+    }
+
+    .stock-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: #94a3b8;
+      margin-left: 4px;
+    }
+
+    .tag-status {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .tag-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .tag-warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .tag-healthy {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .tag-strong {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ff4d4f;
+      border: 1px solid rgba(239, 68, 68, 0.5);
+    }
+
+    /* 富果 API 與 Actions 說明彈窗/抽屜 */
+    .info-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      max-width: 680px;
+      width: 100%;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #58a6ff;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 頂部 Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">T</div>
+      <div class="brand-title">
+        <h1>崔董個人投資組合 — 台股動態即時儀表板</h1>
+        <p>Frank 秘書助理專屬建置 ｜ 支援富果 Fugle API 定時更新 ｜ 資料基準：<span id="asOfDate">2026-10-01</span></p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="badge-api">Fugle API 自動排程架構就緒</div>
+      <button class="btn" onclick="openModal()">架構與 Secrets 設定說明</button>
+      <button class="btn" onclick="fetchData()">重新整理</button>
+    </div>
+  </header>
+
+  <!-- 風控重點警示 -->
+  <div class="alert-banner">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-content">
+      <h3>風控紀律核心列管警戒 (停損與曝險提示)</h3>
+      <p>
+        <strong>1. 亞翔 (6139.TW)</strong>：跌幅達 <strong>-14.73%</strong>（未實現 -9,835 元），深破 -10% 硬性停損線，佔整體投組市值近 30%，維持第一大首要風控列管，建議維持反彈分批減碼 50% 防禦方針。<br>
+        <strong>2. 華通 (2313.TW)</strong>：現價 224.5 元，報酬率 <strong>-10.27%</strong>，再次微幅跌破停損線，列入首要密切觀察名單，若跌破 220 元整數關卡啟動停損調節。
+      </p>
+    </div>
+  </div>
+
+  <!-- 總覽 KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-title">總持股市值</div>
+      <div class="kpi-value" id="kpiMarketValue">NT$ 189,835</div>
+      <div class="kpi-sub">在市 7 檔標的</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">總投資成本</div>
+      <div class="kpi-value" id="kpiCost">NT$ 195,514</div>
+      <div class="kpi-sub">在市投入本金</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">累積未實現損益</div>
+      <div class="kpi-value val-loss" id="kpiPnl">-NT$ 5,679</div>
+      <div class="kpi-sub" id="kpiReturnRate">報酬率 -2.90%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">本日損益動態</div>
+      <div class="kpi-value val-profit" id="kpiTodayPnl">+NT$ 1,825</div>
+      <div class="kpi-sub">由田、0050 等收紅</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">持股勝率</div>
+      <div class="kpi-value" id="kpiWinRate">71.4%</div>
+      <div class="kpi-sub">5 檔獲利 / 2 檔虧損</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">前三大集中度 (CR3)</div>
+      <div class="kpi-value" id="kpiCR3">65.82%</div>
+      <div class="kpi-sub">亞翔 + 0050 + 台達電</div>
+    </div>
+  </div>
+
+  <!-- 核心圖表與配置面板 -->
+  <div class="section-grid">
+    <!-- 左側：資產配置比重條列 -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">持股配置權重與市值佔比 (Weight Distribution)</div>
+      </div>
+      <div id="weightBarsContainer">
+        <!-- 動態渲染 -->
+      </div>
+    </div>
+
+    <!-- 右側：風控與持股診斷 -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">持股狀態分級診斷</div>
+      </div>
+      <div class="diagnosis-item danger">
+        <div class="diagnosis-title">
+          <span>亞翔 (6139)</span>
+          <span style="color:#ef4444">-14.73%</span>
+        </div>
+        <div>第一大持股 (佔比 29.99%)，虧損 -9,835 元，深破停損線，重度風控列管。</div>
+      </div>
+      <div class="diagnosis-item warning">
+        <div class="diagnosis-title">
+          <span>華通 (2313)</span>
+          <span style="color:#f59e0b">-10.27%</span>
+        </div>
+        <div>佔比 7.10%，微幅跌破停損防守價 (225.18 元)，緊密觀察 220 支撐。</div>
+      </div>
+      <div class="diagnosis-item healthy">
+        <div class="diagnosis-title">
+          <span>由田 (3455) & 台達電 (2308)</span>
+          <span style="color:#ff4d4f">+14.48% / +2.55%</span>
+        </div>
+        <div>由田大漲晉升獲利雙冠王；台達電站穩 1900 大關續抱。</div>
+      </div>
+      <div class="diagnosis-item healthy">
+        <div class="diagnosis-title">
+          <span>0050 & 台積電 & 台表科</span>
+          <span style="color:#3b82f6">穩定獲利</span>
+        </div>
+        <div>0050 大盤防禦基石 (+5.42%)；台積電站上 2510 創新高。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 持股明細數據表 -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">在市持股詳細明細表 (Holdings Detail)</div>
+      <div style="font-size:12px; color:var(--text-muted);">台股慣例：紅色為獲利上漲，綠色為虧損下跌</div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>標的名稱 / 代碼</th>
+            <th>產業類別</th>
+            <th>股數</th>
+            <th>成本均價</th>
+            <th>最新現價</th>
+            <th>投入本金</th>
+            <th>當前市值</th>
+            <th>今日損益</th>
+            <th>累積損益</th>
+            <th>報酬率</th>
+            <th>投組權重</th>
+            <th>-10% 停損防守價</th>
+            <th>風控狀態</th>
+          </tr>
+        </thead>
+        <tbody id="holdingsTableBody">
+          <!-- 動態渲染 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 富果 API 與自動化排程說明彈窗 -->
+  <div class="info-modal" id="infoModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 style="font-size:18px; color:#fff;">富果 Fugle API 與 GitHub Actions 自動排程架構</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>崔董您好！關於把 Fugle API 存放在本專案 Repo Secrets 的運作解析：</strong></p>
+        <p style="margin-top:8px;">
+          <strong>1. Frank 能否直接讀取 Repo Secrets？</strong><br>
+          GitHub Secrets 採取「只進不出（Write-Only）」之最高資安防護設計，無論是 Frank（沙盒）、Render 主機還是外部 API，皆無法直接讀出 Secret 明文。
+        </p>
+        <p style="margin-top:8px;">
+          <strong>2. 為什麼這樣設定反而是最完美的自動化架構？</strong><br>
+          因為「定時更新」<strong>完全不需要由 Frank 手動讀取</strong>！而是由 <strong>GitHub Actions</strong> 在雲端排程無人值守自動執行：
+        </p>
+        <div class="code-block">
+崔董存入 Secrets: FUGLE_API_KEY
+       ↓
+GitHub Actions (Cron 排程，週一至五 14:00 自動觸發)
+       ↓
+虛擬機讀取 secrets.FUGLE_API_KEY 執行 update_fugle.py
+       ↓
+調用富果 REST API 抓取最新股價，重算損益與 portfolio.json
+       ↓
+自動 Commit 並重新發布至 GitHub Pages！(24H 全自動零成本)
+        </div>
+        <p style="margin-top:8px;">
+          <strong>3. 崔董 3 步設定 Secrets 指南：</strong><br>
+          ① 進入本 Repo 頁面 ➔ <strong>Settings</strong> ➔ <strong>Secrets and variables</strong> ➔ <strong>Actions</strong><br>
+          ② 點擊 <strong>New repository secret</strong><br>
+          ③ Name 填寫 <code>FUGLE_API_KEY</code>，Secret 貼入您的富果 API Key，點擊 <strong>Add secret</strong> 即完成！
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    崔董專屬全能個人秘書處 (Frank) 規劃建置 ｜ 專用獨立 GitHub 帳號託管 ｜ 嚴格遵循 -10% 硬性停損風控紀律
+  </footer>
+</div>
+
+<script>
+  // 基準預設數據 (離線或 GitHub Pages 初次載入時兜底)
+  const defaultData = {
+    as_of_date: "2026-10-01",
+    summary: {
+      total_market_value: 189835,
+      total_cost: 195514,
+      unrealized_pnl: -5679,
+      return_rate: -0.029,
+      today_pnl: 1825,
+      win_rate: 0.714,
+      cr3: 65.82,
+      holdings_count: 7
+    },
+    holdings: [
+      {
+        symbol: "6139", ticker: "6139.TW", name: "亞翔", sector: "無塵室工程/半導體設備",
+        shares: 75, cost_price: 890.13, current_price: 759.0, cost_amount: 66760,
+        market_value: 56925, today_pnl: 225, pnl: -9835, return_rate: -0.1473, weight: 0.2999,
+        stop_loss_price: 801.12, risk_status: "danger", risk_flag: "🚨 深破 -10% 停損線 (-14.73%)"
+      },
+      {
+        symbol: "0050", ticker: "0050.TW", name: "元大台灣50", sector: "市值型ETF",
+        shares: 400, cost_price: 107.10, current_price: 112.90, cost_amount: 42840,
+        market_value: 45160, today_pnl: 340, pnl: 2320, return_rate: 0.0542, weight: 0.2379,
+        stop_loss_price: 96.39, risk_status: "healthy", risk_flag: "防禦核心 (+5.42%)"
+      },
+      {
+        symbol: "2308", ticker: "2308.TW", name: "台達電", sector: "AI電源/散熱/綠能",
+        shares: 12, cost_price: 1857.67, current_price: 1905.00, cost_amount: 22292,
+        market_value: 22860, today_pnl: 180, pnl: 568, return_rate: 0.0255, weight: 0.1204,
+        stop_loss_price: 1671.90, risk_status: "healthy", risk_flag: "站穩 1900 大關續抱"
+      },
+      {
+        symbol: "6278", ticker: "6278.TW", name: "台表科", sector: "SMT/光電板/PCB",
+        shares: 100, cost_price: 216.12, current_price: 216.50, cost_amount: 21612,
+        market_value: 21650, today_pnl: -150, pnl: 38, return_rate: 0.0018, weight: 0.1140,
+        stop_loss_price: 194.51, risk_status: "healthy", risk_flag: "成本線上小賺續抱"
+      },
+      {
+        symbol: "3455", ticker: "3455.TW", name: "由田", sector: "AOI光學檢測/先進封裝",
+        shares: 60, cost_price: 250.70, current_price: 287.00, cost_amount: 15042,
+        market_value: 17220, today_pnl: 1200, pnl: 2178, return_rate: 0.1448, weight: 0.0907,
+        stop_loss_price: 225.63, risk_status: "strong", risk_flag: "大漲 +7.49% 獲利擴大"
+      },
+      {
+        symbol: "2313", ticker: "2313.TW", name: "華通", sector: "低軌衛星/HDI板",
+        shares: 60, cost_price: 250.20, current_price: 224.50, cost_amount: 15012,
+        market_value: 13470, today_pnl: -120, pnl: -1542, return_rate: -0.1027, weight: 0.0710,
+        stop_loss_price: 225.18, risk_status: "warning", risk_flag: "🚨 微幅跌破停損線 (-10.27%)"
+      },
+      {
+        symbol: "2330", ticker: "2330.TW", name: "台積電", sector: "晶圓代工龍頭",
+        shares: 5, cost_price: 2391.20, current_price: 2510.00, cost_amount: 11956,
+        market_value: 12550, today_pnl: 150, pnl: 594, return_rate: 0.0497, weight: 0.0661,
+        stop_loss_price: 2152.08, risk_status: "healthy", risk_flag: "站上 2510 創新高"
+      }
+    ]
+  };
+
+  function formatMoney(num) {
+    return 'NT$ ' + Math.round(num).toLocaleString('en-US');
+  }
+
+  function formatPercent(num) {
+    const sign = num > 0 ? '+' : '';
+    return sign + (num * 100).toFixed(2) + '%';
+  }
+
+  function renderDashboard(data) {
+    document.getElementById('asOfDate').innerText = data.as_of_date || "2026-10-01";
+    document.getElementById('kpiMarketValue').innerText = formatMoney(data.summary.total_market_value);
+    document.getElementById('kpiCost').innerText = formatMoney(data.summary.total_cost);
+    
+    const pnlEl = document.getElementById('kpiPnl');
+    const pnlVal = data.summary.unrealized_pnl;
+    pnlEl.innerText = (pnlVal >= 0 ? '+NT$ ' : '-NT$ ') + Math.abs(Math.round(pnlVal)).toLocaleString('en-US');
+    pnlEl.className = 'kpi-value ' + (pnlVal >= 0 ? 'val-profit' : 'val-loss');
+
+    const retEl = document.getElementById('kpiReturnRate');
+    retEl.innerText = '報酬率 ' + formatPercent(data.summary.return_rate);
+
+    const todayEl = document.getElementById('kpiTodayPnl');
+    const todayVal = data.summary.today_pnl || 0;
+    todayEl.innerText = (todayVal >= 0 ? '+NT$ ' : '-NT$ ') + Math.abs(Math.round(todayVal)).toLocaleString('en-US');
+    todayEl.className = 'kpi-value ' + (todayVal >= 0 ? 'val-profit' : 'val-loss');
+
+    document.getElementById('kpiWinRate').innerText = ((data.summary.win_rate || 0.714) * 100).toFixed(1) + '%';
+    document.getElementById('kpiCR3').innerText = (data.summary.cr3 || 65.82).toFixed(2) + '%';
+
+    // 渲染權重條列
+    const weightContainer = document.getElementById('weightBarsContainer');
+    weightContainer.innerHTML = '';
+    const colorPalette = ['#ef4444', '#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'];
+
+    data.holdings.forEach((h, index) => {
+      const color = colorPalette[index % colorPalette.length];
+      const pct = (h.weight * 100).toFixed(2);
+      const item = document.createElement('div');
+      item.className = 'weight-bar-item';
+      item.innerHTML = `
+        <div class="weight-info">
+          <span class="weight-name">${h.name} (${h.symbol}) <span style="font-size:11px;color:#64748b;">${h.sector}</span></span>
+          <span class="weight-percent">${pct}% · ${formatMoney(h.market_value)}</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: ${pct}%; background: ${color};"></div>
+        </div>
+      `;
+      weightContainer.appendChild(item);
+    });
+
+    // 渲染表格
+    const tbody = document.getElementById('holdingsTableBody');
+    tbody.innerHTML = '';
+    data.holdings.forEach(h => {
+      const tr = document.createElement('tr');
+      const pnlClass = h.pnl >= 0 ? 'val-profit' : 'val-loss';
+      const todayClass = (h.today_pnl || 0) >= 0 ? 'val-profit' : 'val-loss';
+      
+      let statusTag = '';
+      if (h.risk_status === 'danger') statusTag = '<span class="tag-status tag-danger">🚨 深破停損</span>';
+      else if (h.risk_status === 'warning') statusTag = '<span class="tag-status tag-warning">⚠️ 停損警戒</span>';
+      else if (h.risk_status === 'strong') statusTag = '<span class="tag-status tag-strong">🔥 強勢噴出</span>';
+      else statusTag = '<span class="tag-status tag-healthy">穩健獲利</span>';
+
+      tr.innerHTML = `
+        <td><strong>${h.name}</strong> <span class="stock-badge">${h.symbol}</span></td>
+        <td style="color:#94a3b8;">${h.sector}</td>
+        <td>${h.shares.toLocaleString()} 股</td>
+        <td>${h.cost_price.toFixed(2)}</td>
+        <td style="font-weight:700;">${h.current_price.toFixed(2)}</td>
+        <td>${formatMoney(h.cost_amount)}</td>
+        <td><strong>${formatMoney(h.market_value)}</strong></td>
+        <td class="${todayClass}">${(h.today_pnl || 0) >= 0 ? '+' : ''}${Math.round(h.today_pnl || 0).toLocaleString()}</td>
+        <td class="${pnlClass}" style="font-weight:700;">${h.pnl >= 0 ? '+' : ''}${Math.round(h.pnl).toLocaleString()}</td>
+        <td class="${pnlClass}" style="font-weight:700;">${formatPercent(h.return_rate)}</td>
+        <td>${(h.weight * 100).toFixed(2)}%</td>
+        <td style="color:#f59e0b;">${h.stop_loss_price.toFixed(2)}</td>
+        <td>${statusTag}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function fetchData() {
+    fetch('portfolio.json?t=' + Date.now())
+      .then(res => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then(data => {
+        renderDashboard(data);
+      })
+      .catch(err => {
+        console.warn('Using embedded portfolio data:', err);
+        renderDashboard(defaultData);
+      });
+  }
+
+  function openModal() {
+    document.getElementById('infoModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('infoModal').style.display = 'none';
+  }
+
+  window.onclick = function(e) {
+    const modal = document.getElementById('infoModal');
+    if (e.target === modal) closeModal();
+  }
+
+  // 初次執行
+  fetchData();
+</script>
+</body>
+</html>

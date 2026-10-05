@@ -1054,7 +1054,7 @@
       <div class="status-group">
         <div class="badge-status">
           <span class="indicator-dot"></span>
-          <span id="headerDate">基準日：2026-10-01 盤後結算</span>
+          <span id="headerDate">基準日：2026-10-05 盤後結算</span>
         </div>
         <!-- 崔董指定：淺色/深色模式即時切換按鈕 -->
         <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="切換 日間淺色 / 黑曜石深色 外觀模式" aria-label="切換外觀主題">
@@ -1083,7 +1083,7 @@
           <span>總持股市值</span>
           <span class="num">TWD</span>
         </div>
-        <div class="kpi-main-val num" id="kpiMarketValue">NT$ 189,835</div>
+        <div class="kpi-main-val num" id="kpiMarketValue">NT$ 196,485</div>
         <div class="kpi-sub-line">
           <span>投入總成本</span>
           <span class="num" id="kpiTotalCost">NT$ 195,514</span>
@@ -1093,12 +1093,12 @@
       <div class="kpi-card">
         <div class="kpi-label">
           <span>累積未實現損益</span>
-          <span id="kpiReturnRateBadge" class="tag-badge tag-danger">-2.90%</span>
+          <span id="kpiReturnRateBadge" class="tag-badge tag-safe">+0.50%</span>
         </div>
-        <div class="kpi-main-val num" id="kpiUnrealizedPnL">-NT$ 5,679</div>
+        <div class="kpi-main-val num" id="kpiUnrealizedPnL">+NT$ 971</div>
         <div class="kpi-sub-line">
           <span>距損益平衡線</span>
-          <span class="num" id="kpiGap">尚需 +NT$ 5,679</span>
+          <span class="num" id="kpiGap">已達損益平衡 (+NT$ 971)</span>
         </div>
       </div>
 
@@ -1107,7 +1107,7 @@
           <span>今日結算損益</span>
           <span class="tag-badge tag-safe">+0.97%</span>
         </div>
-        <div class="kpi-main-val num text-up" id="kpiTodayPnL">+NT$ 1,825</div>
+        <div class="kpi-main-val num text-up" id="kpiTodayPnL">+NT$ 6,060</div>
         <div class="kpi-sub-line">
           <span>最大貢獻者</span>
           <span class="text-up">由田 (+NT$ 1,200)</span>
@@ -1119,7 +1119,7 @@
           <span>投組集中度 CR3</span>
           <span class="tag-badge tag-danger" id="kpiCr3Badge">警戒 (門檻 60%)</span>
         </div>
-        <div class="kpi-main-val num text-warn" id="kpiCr3Value">65.82%</div>
+        <div class="kpi-main-val num text-warn" id="kpiCr3Value">66.00%</div>
         <div class="kpi-sub-line">
           <span>前三大標的</span>
           <span>亞翔 30% · 0050 24% · 台達電 12%</span>
@@ -1129,12 +1129,12 @@
       <div class="kpi-card">
         <div class="kpi-label">
           <span>停損風控戒備狀態</span>
-          <span class="tag-badge tag-danger">2 檔觸發停損</span>
+          <span class="tag-badge tag-danger">1 檔觸發停損</span>
         </div>
-        <div class="kpi-main-val num text-down" style="font-size: 20px; line-height: 1.5;">🚨 亞翔 & 華通</div>
+        <div class="kpi-main-val num text-down" style="font-size: 20px; line-height: 1.5;">🚨 亞翔 (華通已脫離警戒)</div>
         <div class="kpi-sub-line">
           <span>處置原則</span>
-          <span>深破 -10% 硬性停損防禦</span>
+          <span>亞翔 -11.25% 列管防禦</span>
         </div>
       </div>
     </section>
@@ -1161,43 +1161,44 @@
                 <span class="risk-stock-ticker num">6139.TW</span>
               </div>
               <div class="risk-stat-badge">
-                <div class="risk-stat-pnl num">-14.73% (-NT$ 9,835)</div>
-                <div class="risk-stat-weight">佔投組權重 29.99%</div>
+                <div class="risk-stat-pnl num text-down">-11.25% (-NT$ 7,510)</div>
+                <div class="risk-stat-weight">佔投組權重 30.15%</div>
               </div>
             </div>
             <div class="risk-plan-box" style="margin-top: 10px;">
               <strong>作戰處置建議：</strong>
-              現價 759 元深破成本線 890 元。佔比近三成是整體投組虧損主因。建議若反彈至 <strong>770~780 元</strong> 執行防守減碼 50%（約 38 股），可釋出 <strong>NT$ 29,260 現金</strong>，並將權重降至安全線 16.5%。
+              現價 790 元（收復 31 元），停損防守價為 <strong>801.12 元</strong>。佔比三成仍為投組核心列管標的。建議若反彈觸及 <strong>800~805 元</strong> 執行防守減碼 50%（約 38 股），可釋出 <strong>NT$ 30,400 現金</strong>，並將權重降至 16% 安全區間。
             </div>
           </div>
           <div class="risk-action-bar">
             <button class="btn-sim-action" onclick="applyQuickSim('asia_air_cut')">
-              ⚡ 一鍵模擬：亞翔反彈 775 減碼 50%
+              ⚡ 一鍵模擬：亞翔反彈 800 減碼 50%
             </button>
           </div>
         </div>
 
-        <!-- 華通 -->
-        <div class="risk-item-card">
+        <!-- 華通 (已脫離警戒) -->
+        <div class="risk-item-card" style="border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.04);">
           <div>
             <div class="risk-stock-top">
               <div>
                 <span class="risk-stock-name">華通</span>
                 <span class="risk-stock-ticker num">2313.TW</span>
+                <span class="tag-badge tag-safe" style="margin-left: 6px;">🟢 脫離警戒</span>
               </div>
               <div class="risk-stat-badge">
-                <div class="risk-stat-pnl num">-10.27% (-NT$ 1,542)</div>
-                <div class="risk-stat-weight">佔投組權重 7.10%</div>
+                <div class="risk-stat-pnl num text-up">-0.68% (-NT$ 102)</div>
+                <div class="risk-stat-weight">今日強彈 +9.96%</div>
               </div>
             </div>
-            <div class="risk-plan-box" style="margin-top: 10px;">
+            <div class="risk-plan-box" style="margin-top: 10px; border-left-color: var(--tw-down);">
               <strong>作戰處置建議：</strong>
-              成本 250.2 元，收盤 224.5 元微幅跌破 -10% 硬性停損點。短線關鍵防守價設在 <strong>220 元</strong>。若跌破 220 元即刻執行停損，回收 <strong>NT$ 13,200</strong> 轉入 0050 防禦。
+              成本 250.2 元，收盤 248.5 元強勁收復失土，虧損收斂至 -0.68%，已成功脫離 -10% 硬性停損警戒線！建議解除警戒列管，移動停利/防守價調升至 <strong>240 元</strong> 續抱。
             </div>
           </div>
           <div class="risk-action-bar">
-            <button class="btn-sim-action" onclick="applyQuickSim('compeq_cut')">
-              ⚡ 一鍵模擬：華通出清 60 股轉 0050
+            <button class="btn-sim-action" style="background: var(--tw-blue-bg); border-color: var(--tw-blue-border); color: var(--tw-blue);" onclick="applyQuickSim('compeq_hold')">
+              🛡️ 移動防守：鎖定 240 元續抱低軌衛星
             </button>
           </div>
         </div>
@@ -1319,7 +1320,7 @@
   <div class="toast-msg" id="toastMsg">已複製網址到剪貼簿</div>
 
   <script>
-    // 基準原始數據 (2026-10-01 盤後)
+    // 基準原始數據 (2026-10-05 富果盤後結算)
     const RAW_PORTFOLIO = [
       {
         symbol: "6139.TW",
@@ -1327,11 +1328,11 @@
         sector: "無塵室機電",
         shares: 75,
         cost_price: 890.13,
-        current_price: 759.0,
-        today_change_pct: 0.40,
+        current_price: 790.0,
+        today_change_pct: 1.94,
         color: "#f59e0b",
         risk_level: "danger",
-        risk_desc: "🚨 深破 -10% 停損"
+        risk_desc: "🚨 跌破 -10% 停損"
       },
       {
         symbol: "0050.TW",
@@ -1339,8 +1340,8 @@
         sector: "權值型 ETF",
         shares: 400,
         cost_price: 107.10,
-        current_price: 112.90,
-        today_change_pct: 0.76,
+        current_price: 115.95,
+        today_change_pct: 2.79,
         color: "#3b82f6",
         risk_level: "safe",
         risk_desc: "🛡️ 防禦核心"
@@ -1351,10 +1352,10 @@
         sector: "電源零組件",
         shares: 12,
         cost_price: 1857.67,
-        current_price: 1905.00,
-        today_change_pct: 0.79,
+        current_price: 2005.00,
+        today_change_pct: 6.37,
         color: "#10b981",
-        risk_level: "normal",
+        risk_level: "safe",
         risk_desc: "穩健持股"
       },
       {
@@ -1363,8 +1364,8 @@
         sector: "SMT 打件",
         shares: 100,
         cost_price: 216.12,
-        current_price: 216.50,
-        today_change_pct: -0.69,
+        current_price: 220.00,
+        today_change_pct: 1.38,
         color: "#8b5cf6",
         risk_level: "normal",
         risk_desc: "平盤守穩"
@@ -1375,8 +1376,8 @@
         sector: "AOI 檢測設備",
         shares: 60,
         cost_price: 250.70,
-        current_price: 287.00,
-        today_change_pct: 7.49,
+        current_price: 283.50,
+        today_change_pct: 1.25,
         color: "#ec4899",
         risk_level: "stellar",
         risk_desc: "⭐ 強勢領漲"
@@ -1387,11 +1388,11 @@
         sector: "低軌衛星 HDI",
         shares: 60,
         cost_price: 250.20,
-        current_price: 224.50,
-        today_change_pct: -0.88,
-        color: "#ef4444",
-        risk_level: "danger",
-        risk_desc: "🚨 跌破停損線"
+        current_price: 248.50,
+        today_change_pct: 9.96,
+        color: "#059669",
+        risk_level: "safe",
+        risk_desc: "🟢 脫離停損警戒"
       },
       {
         symbol: "2330.TW",
@@ -1399,8 +1400,8 @@
         sector: "半導體代工",
         shares: 5,
         cost_price: 2391.20,
-        current_price: 2510.00,
-        today_change_pct: 1.21,
+        current_price: 2575.00,
+        today_change_pct: 3.00,
         color: "#06b6d4",
         risk_level: "stellar",
         risk_desc: "⭐ 創天價續抱"
@@ -1673,14 +1674,16 @@
     // 快捷戰略情境模擬
     function applyQuickSim(type) {
       if (type === 'asia_air_cut') {
-        // 亞翔反彈 775 減碼 38 股 (50%)
+        // 亞翔反彈 800 減碼 38 股 (50%)
         const asia = currentData.find(s => s.symbol === '6139.TW');
         if (asia) {
-          asia.current_price = 775.0;
+          asia.current_price = 800.0;
           asia.shares = 37; // 減碼 38 股
-          updateSimInputValue('6139.TW', 775.0);
-          showToast('已套用：亞翔反彈至 775 元並減碼 38 股！');
+          updateSimInputValue('6139.TW', 800.0);
+          showToast('已套用：亞翔反彈至 800 元並減碼 38 股！');
         }
+      } else if (type === 'compeq_hold') {
+        showToast('已鎖定：華通以 240 元作為移動停利/防守價續抱！');
       } else if (type === 'compeq_cut') {
         // 華通出清 60 股轉 0050
         const compeq = currentData.find(s => s.symbol === '2313.TW');
@@ -1833,8 +1836,28 @@
               const matched = currentData.find(s => s.symbol.replace('.TW', '') === rh.symbol || s.symbol === rh.symbol);
               if (matched) {
                 if (typeof rh.current_price === 'number') matched.current_price = rh.current_price;
-                if (typeof rh.today_change_pct === 'number') matched.today_change_pct = rh.today_change_pct;
                 if (typeof rh.shares === 'number') matched.shares = rh.shares;
+                if (typeof rh.cost_price === 'number') matched.cost_price = rh.cost_price;
+                if (typeof rh.today_change_pct === 'number') {
+                  matched.today_change_pct = rh.today_change_pct;
+                } else if (typeof rh.today_pnl === 'number' && matched.shares > 0) {
+                  const prevClose = matched.current_price - (rh.today_pnl / matched.shares);
+                  matched.today_change_pct = prevClose > 0 ? ((matched.current_price - prevClose) / prevClose) * 100 : 0;
+                }
+                const retRate = (matched.current_price - matched.cost_price) / matched.cost_price;
+                if (retRate <= -0.10) {
+                  matched.risk_level = 'danger';
+                  matched.risk_desc = '🚨 跌破 -10% 停損';
+                } else if (retRate <= -0.05) {
+                  matched.risk_level = 'danger';
+                  matched.risk_desc = '⚠️ 接近停損線';
+                } else if (retRate >= 0.08) {
+                  matched.risk_level = 'stellar';
+                  matched.risk_desc = '⭐ 強勢領漲';
+                } else {
+                  matched.risk_level = 'safe';
+                  matched.risk_desc = '🛡️ 持股健康';
+                }
               }
             });
             renderDashboard();

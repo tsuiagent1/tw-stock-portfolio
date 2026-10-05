@@ -7,425 +7,572 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
-    body {
-      font-family: 'Noto Sans TC', sans-serif;
-      background-color: #0b0f19;
-      color: #f3f4f6;
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            twRed: '#ef4444',
+            twGreen: '#10b981',
+            darkBg: '#0b0f19',
+            cardBg: '#131b2e',
+            cardBorder: '#1f293d',
+            accentBlue: '#3b82f6',
+          }
+        }
+      }
     }
-    .stock-up { color: #ef4444; }
-    .stock-down { color: #22c55e; }
-    .bg-stock-up-soft { background-color: rgba(239, 68, 68, 0.12); }
-    .bg-stock-down-soft { background-color: rgba(34, 197, 94, 0.12); }
+  </script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
     .glass-card {
-      background: rgba(17, 24, 39, 0.85);
+      background: rgba(19, 27, 46, 0.85);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      border-radius: 1rem;
     }
-    .glow-border:hover {
-      border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    .badge-warning {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .badge-success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .badge-info {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .stock-up {
+      color: #ef4444; /* 台灣習慣：紅漲 */
+    }
+    .stock-down {
+      color: #10b981; /* 台灣習慣：綠跌 */
     }
   </style>
 </head>
-<body class="min-h-screen pb-12">
-  <!-- 頂部導航 -->
-  <header class="border-b border-gray-800 bg-gray-900/60 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
-          <i class="fa-solid fa-chart-pie text-white text-xl"></i>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-gray-800 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+          <i class="fa-solid fa-chart-line text-lg"></i>
         </div>
         <div>
-          <h1 class="font-black text-lg sm:text-xl tracking-tight text-white flex items-center gap-2">
-            崔董專屬 · 台股戰情室
-            <span class="text-xs bg-blue-500/20 text-blue-400 font-semibold px-2 py-0.5 rounded-full border border-blue-500/30">PRO VIP</span>
-          </h1>
-          <p class="text-xs text-gray-400 hidden sm:block">即時投資組合市值監控與盤勢分析 · 秘書 Frank 彙整</p>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">崔董專屬｜台股投資組合與市場戰情儀表板</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">VIP 實盤</span>
+          </div>
+          <p class="text-xs text-gray-400 flex items-center gap-2 mt-0.5">
+            <span><i class="fa-regular fa-clock mr-1"></i>資料結算基準：<strong class="text-gray-200" id="headerDate">2026-10-05 盤後</strong></span>
+            <span class="text-gray-600">•</span>
+            <span class="text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1"></span>7 檔真實在庫</span>
+          </p>
         </div>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          連線正常 · 收盤結算
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <div class="px-3 py-1.5 rounded-lg bg-gray-800/80 border border-gray-700 text-xs flex items-center gap-2 text-gray-300">
+          <i class="fa-solid fa-user-shield text-blue-400"></i>
+          <span>特助執行秘書：<strong>Frank</strong></span>
         </div>
-        <button onclick="refreshData()" class="p-2 text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-all border border-gray-700" title="重新整理">
-          <i class="fa-solid fa-arrows-rotate"></i>
+        <button onclick="refreshData()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition flex items-center gap-1.5 shadow-md shadow-blue-600/30">
+          <i class="fa-solid fa-rotate text-xs"></i>
+          <span>重新整理</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
-    <!-- 頂部摘要卡片區 -->
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-grow w-full">
+
+    <!-- KPI Metric Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- 總市值 -->
-      <div class="glass-card rounded-2xl p-5 glow-border transition-all">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">總投資市值</span>
-          <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400 text-sm">
-            <i class="fa-solid fa-wallet"></i>
-          </span>
+      <!-- Total Market Value -->
+      <div class="glass-card p-5 relative overflow-hidden group hover:border-blue-500/50 transition">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">總持股市值</p>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1" id="kpiMarketValue">NT$ 196,485</h3>
+          </div>
+          <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            <i class="fa-solid fa-vault text-lg"></i>
+          </div>
         </div>
-        <div class="text-2xl lg:text-3xl font-black text-white" id="totalMarketValue">NT$ 11,485,000</div>
-        <div class="mt-2 text-xs text-gray-400 flex items-center justify-between">
-          <span>原始總成本: <span class="font-medium text-gray-300" id="totalCost">NT$ 9,250,000</span></span>
+        <div class="mt-3 flex items-center text-xs text-gray-400">
+          <span>投入成本：</span>
+          <span class="ml-1 font-semibold text-gray-200" id="kpiTotalCost">NT$ 195,514</span>
         </div>
       </div>
 
-      <!-- 未實現損益 -->
-      <div class="glass-card rounded-2xl p-5 glow-border transition-all">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">總未實現損益</span>
-          <span class="p-2 rounded-lg bg-red-500/10 text-red-400 text-sm">
-            <i class="fa-solid fa-arrow-trend-up"></i>
-          </span>
+      <!-- Unrealized PnL -->
+      <div class="glass-card p-5 relative overflow-hidden group hover:border-red-500/50 transition">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">累積未實現損益</p>
+            <h3 class="text-2xl sm:text-3xl font-extrabold stock-up mt-1" id="kpiUnrealizedPnL">+NT$ 971</h3>
+          </div>
+          <div class="p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+          </div>
         </div>
-        <div class="text-2xl lg:text-3xl font-black stock-up flex items-baseline gap-2" id="unrealizedProfit">
-          +NT$ 2,235,000
-        </div>
-        <div class="mt-2 text-xs flex items-center gap-1.5 stock-up font-bold">
-          <i class="fa-solid fa-caret-up"></i>
-          <span id="unrealizedReturnPct">+24.16%</span>
-          <span class="text-gray-400 font-normal ml-1">累積報酬率</span>
+        <div class="mt-3 flex items-center text-xs">
+          <span class="text-gray-400">總報酬率：</span>
+          <span class="ml-1 font-bold stock-up" id="kpiReturnRate">+0.50%</span>
+          <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">紅字獲利</span>
         </div>
       </div>
 
-      <!-- 今日損益 -->
-      <div class="glass-card rounded-2xl p-5 glow-border transition-all">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">今日損益 (預估)</span>
-          <span class="p-2 rounded-lg bg-amber-500/10 text-amber-400 text-sm">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-          </span>
+      <!-- Today PnL -->
+      <div class="glass-card p-5 relative overflow-hidden group hover:border-emerald-500/50 transition">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">今日損益變動</p>
+            <h3 class="text-2xl sm:text-3xl font-extrabold stock-up mt-1" id="kpiTodayPnL">+NT$ 6,060</h3>
+          </div>
+          <div class="p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
+            <i class="fa-solid fa-arrow-trend-up text-lg"></i>
+          </div>
         </div>
-        <div class="text-2xl lg:text-3xl font-black stock-up flex items-baseline gap-2" id="todayProfit">
-          +NT$ 142,500
-        </div>
-        <div class="mt-2 text-xs flex items-center gap-1.5 stock-up font-bold">
-          <i class="fa-solid fa-caret-up"></i>
-          <span id="todayReturnPct">+1.25%</span>
-          <span class="text-gray-400 font-normal ml-1">今日漲跌幅</span>
+        <div class="mt-3 flex items-center text-xs text-gray-400">
+          <span>7 檔持股單日全線收紅增長</span>
         </div>
       </div>
 
-      <!-- 大盤指數 -->
-      <div class="glass-card rounded-2xl p-5 glow-border transition-all">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">加權指數 (TAIEX)</span>
-          <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm">
-            <i class="fa-solid fa-globe"></i>
-          </span>
-        </div>
-        <div class="text-2xl lg:text-3xl font-black text-white" id="taiexValue">22,850.32</div>
-        <div class="mt-2 text-xs flex items-center justify-between">
-          <span class="stock-up font-bold flex items-center gap-1">
-            <i class="fa-solid fa-caret-up"></i> +185.45 (+0.82%)
-          </span>
-          <span class="text-gray-400">量 3,840.5億</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 圖表與戰情概況 -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- 資產配置圓餅圖 -->
-      <div class="glass-card rounded-2xl p-6 glow-border transition-all flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-xl font-bold flex items-center gap-2">
-            <i class="fa-solid fa-chart-pie text-blue-400"></i> 資產配置圓餅圖
-          </h2>
-          <span class="text-xs text-gray-400">依當前市值權重</span>
-        </div>
-        
-        <!-- 圓餅圖容器 -->
-        <div class="relative h-64 w-full flex items-center justify-center my-auto">
-          <canvas id="allocationChart"></canvas>
-        </div>
-
-        <div class="mt-4 pt-3 border-t border-gray-800/80 grid grid-cols-2 gap-2 text-xs text-gray-400">
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-            <span>台積電 44.19%</span>
+      <!-- Win Rate & Holdings Count -->
+      <div class="glass-card p-5 relative overflow-hidden group hover:border-indigo-500/50 transition">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">持股檔數 / 勝率</p>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">7 檔 <span class="text-lg font-normal text-emerald-400">(71.4%)</span></h3>
           </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span>
-            <span>聯發科 16.85%</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span>
-            <span>鴻海 13.83%</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-            <span>廣達 9.93%</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-            <span>0050 9.48%</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block"></span>
-            <span>富邦金 5.73%</span>
+          <div class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <i class="fa-solid fa-crosshairs text-lg"></i>
           </div>
         </div>
-      </div>
-
-      <!-- 產業與投資焦點分析 -->
-      <div class="glass-card rounded-2xl p-6 glow-border transition-all lg:col-span-2 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold flex items-center gap-2">
-              <i class="fa-solid fa-microchip text-indigo-400"></i> 核心產業佈局與動態分析
-            </h2>
-            <span class="text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">半導體 & AI 核心</span>
-          </div>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div class="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
-              <div class="text-xs text-gray-400">半導體 & 晶圓代工</div>
-              <div class="text-xl font-bold text-white mt-1">44.19%</div>
-              <div class="text-xs text-blue-400 mt-0.5">台積電 (2330)</div>
-            </div>
-            <div class="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
-              <div class="text-xs text-gray-400">AI 伺服器 & 代工</div>
-              <div class="text-xl font-bold text-white mt-1">23.76%</div>
-              <div class="text-xs text-pink-400 mt-0.5">鴻海 (2317) · 廣達 (2382)</div>
-            </div>
-            <div class="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
-              <div class="text-xs text-gray-400">IC 設計 & 市值/金融</div>
-              <div class="text-xl font-bold text-white mt-1">32.05%</div>
-              <div class="text-xs text-purple-400 mt-0.5">聯發科 · 0050 · 富邦金</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-blue-950/20 border border-blue-800/40 rounded-xl p-4 text-sm leading-relaxed text-gray-300">
-          <div class="flex items-center gap-2 font-bold text-blue-300 mb-1">
-            <i class="fa-solid fa-lightbulb"></i> 秘書 Frank 盤後策略摘要
-          </div>
-          <p>
-            崔董您好！今日台股在權值龍頭台積電（+1.50%）強勢表態下穩健收高，您的持股總市值突破 <strong class="text-white">NT$ 1,148.5 萬元</strong>，累積未實現報酬達 <strong class="text-red-400">+24.16%</strong>。已將資產配置圖更新為直觀清晰的圓餅圖，方便您一眼綜覽各檔持股比重分布。目前配置緊扣全球先進製程與 AI 運算硬體雙核心主線，聯發科與廣達今日亦同步放量走揚。建議續抱核心部位，掌握第四季產業傳統旺季與 AI 伺服器放量紅利。
-          </p>
+        <div class="mt-3 flex items-center text-xs text-gray-400">
+          <span>CR3 前三大集中度：</span>
+          <span class="ml-1 font-semibold text-gray-200">66.0%</span>
         </div>
       </div>
     </div>
 
-    <!-- 持股明細表格 -->
-    <div class="glass-card rounded-2xl p-6 glow-border transition-all overflow-hidden">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-        <div>
-          <h2 class="text-xl font-bold flex items-center gap-2">
-            <i class="fa-solid fa-table-list text-emerald-400"></i> 持股即時明細清單
-          </h2>
-          <p class="text-xs text-gray-400 mt-0.5">即時追蹤每筆投資成本、市價、持股數與即時報酬</p>
+    <!-- Risk Alert & Strategy Banner -->
+    <div class="glass-card p-5 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/10 via-cardBg to-cardBg">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-start space-x-3.5">
+          <div class="p-2 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex-shrink-0 mt-0.5">
+            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-white">持股即時風控與紀律通報</h2>
+              <span class="px-2 py-0.5 text-xs rounded-full badge-warning font-semibold">硬性停損線 -10%</span>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-300 mt-1 leading-relaxed">
+              ⚠️ <strong class="text-red-400">亞翔 (6139)</strong> 現價 $790.00 跌破停損線 $801.12（未實現損益率 <span class="font-bold text-red-400">-11.25%</span>），觸發停損警戒，請崔董評估執行停損或部位調節。<br class="hidden sm:inline">
+              ✨ <strong class="text-emerald-400">由田 (3455)</strong> 續創佳績，報酬率達 <span class="font-bold text-emerald-400">+13.08%</span> 為目前最強波段核心；<strong class="text-gray-200">友達 (2409)</strong> 已於 9/23 全數出清，目前庫存為 0。
+            </p>
+          </div>
         </div>
-        <div class="text-xs text-gray-400 flex items-center gap-4">
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> 漲 / 獲利 (台股紅)</span>
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span> 跌 / 虧損 (台股綠)</span>
+        <div class="flex-shrink-0 self-end sm:self-center">
+          <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700">
+            <i class="fa-solid fa-shield-halved text-amber-400 mr-1.5"></i>
+            嚴格落實風控停損
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Allocation Doughnut Chart -->
+      <div class="lg:col-span-5 glass-card p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-chart-pie text-blue-400"></i>
+              <h2 class="text-lg font-bold text-white">資產配置比例 (權重圓餅圖)</h2>
+            </div>
+            <span class="text-xs text-gray-400">總計 7 檔真實部位</span>
+          </div>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="allocationChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-800 grid grid-cols-2 gap-2 text-xs text-gray-400">
+          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6] mr-2"></span>亞翔 (30.15%)</div>
+          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#10b981] mr-2"></span>元大台灣50 (23.60%)</div>
+          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] mr-2"></span>台達電 (12.25%)</div>
+          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#8b5cf6] mr-2"></span>台表科 (11.20%)</div>
+          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#ec4899] mr-2"></span>由田 (8.66%)</div>
+          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#06b6d4] mr-2"></span>華通 (7.59%)</div>
+          <div class="flex items-center col-span-2"><span class="w-2.5 h-2.5 rounded-full bg-[#64748b] mr-2"></span>台積電 零股 (6.55%)</div>
         </div>
       </div>
 
+      <!-- Return Rate / PnL Bar Chart -->
+      <div class="lg:col-span-7 glass-card p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-ranking-star text-indigo-400"></i>
+              <h2 class="text-lg font-bold text-white">持股未實現報酬率排行 (台股紅漲綠跌)</h2>
+            </div>
+            <span class="text-xs text-gray-400">基準線 0.0% / 警戒線 -10%</span>
+          </div>
+          <div class="relative h-64">
+            <canvas id="returnRateChart"></canvas>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between text-xs text-gray-400">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded bg-red-500/80 inline-block"></span>
+            <span>獲利標的 (台股紅)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded bg-emerald-500/80 inline-block"></span>
+            <span>虧損標的 (台股綠)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 border-b-2 border-red-500 inline-block"></span>
+            <span>-10% 停損紅線</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Holdings Table Section -->
+    <div class="glass-card overflow-hidden">
+      <div class="p-5 border-b border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div class="flex items-center space-x-2">
+          <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            <i class="fa-solid fa-table-list"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">崔董 7 檔真實庫存詳細明細</h2>
+            <p class="text-xs text-gray-400">剔除示範股（無鴻海、聯發科、廣達、富邦金），友達已出清無庫存</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 self-end sm:self-auto">
+          <span class="text-xs px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 border border-gray-700 font-mono">
+            COUNT: 7 STOCKS
+          </span>
+        </div>
+      </div>
+
+      <!-- Table Body -->
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="border-b border-gray-800 text-gray-400 font-semibold text-xs uppercase tracking-wider">
-              <th class="py-3 px-4">股票名稱 / 代號</th>
-              <th class="py-3 px-4">所屬產業</th>
-              <th class="py-3 px-4 text-right">持有股數</th>
-              <th class="py-3 px-4 text-right">平均成本</th>
-              <th class="py-3 px-4 text-right">當前現價</th>
-              <th class="py-3 px-4 text-right">今日漲跌</th>
-              <th class="py-3 px-4 text-right">目前市值</th>
-              <th class="py-3 px-4 text-right">權重</th>
-              <th class="py-3 px-4 text-right">未實現損益</th>
-              <th class="py-3 px-4 text-right">報酬率</th>
+        <table class="w-full text-left text-sm text-gray-300">
+          <thead class="text-xs uppercase bg-[#0f172a]/90 text-gray-400 border-b border-gray-800">
+            <tr>
+              <th scope="col" class="px-5 py-3.5 font-semibold">標的名稱 / 代號</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold">產業領域</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">持股股數</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">成本價</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">當前現價</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">持股市值</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">權重</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">未實現損益</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">報酬率</th>
+              <th scope="col" class="px-5 py-3.5 font-semibold text-center">風控狀態</th>
             </tr>
           </thead>
-          <tbody id="holdingsTableBody" class="divide-y divide-gray-800/60">
-            <!-- 動態填入 -->
+          <tbody id="holdingsTableBody" class="divide-y divide-gray-800">
+            <!-- Rendered by JS -->
           </tbody>
         </table>
       </div>
+      <div class="p-4 border-t border-gray-800/80 bg-[#0d1322] flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-400">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>資料與後端 portfolio.json 主檔 100% 同步相符</span>
+        </div>
+        <div class="flex gap-4">
+          <span>總成本：<strong class="text-gray-200">NT$ 195,514</strong></span>
+          <span>總市值：<strong class="text-gray-200">NT$ 196,485</strong></span>
+          <span>結算未實現損益：<strong class="stock-up font-bold">+NT$ 971 (+0.50%)</strong></span>
+        </div>
+      </div>
     </div>
+
+    <!-- Liquidation & History Archive Notice -->
+    <div class="glass-card p-4 text-xs text-gray-400 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-box-archive text-gray-500"></i>
+        <span>歷史結算紀錄：<strong>友達 (2409.TW)</strong> 於 2026-09-23 完成波段停損全數出清（在庫 0 股），已完全移出即時庫存監控池。</span>
+      </div>
+      <span class="text-gray-500">無其他示範標的</span>
+    </div>
+
   </main>
 
-  <footer class="mt-12 text-center text-xs text-gray-500 space-y-2">
-    <p>崔董個人專屬台股決策管理系統 · 保密資訊</p>
-    <p>資料更新於 2026-10-05 17:30 · 秘書 Frank 敬上</p>
+  <!-- Footer -->
+  <footer class="border-t border-gray-800/80 py-4 bg-[#0a0e17] text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <p>崔董專屬台股決策戰情室 © 2026 Mark Tsui All Rights Reserved. 執行秘書 Frank 監製維護</p>
+      <p class="font-mono text-gray-600">Repo: tsuiagent1/tw-stock-portfolio | Branch: main</p>
+    </div>
   </footer>
 
+  <!-- Script to populate data & render charts -->
   <script>
-    const portfolioData = {
-      updated_at: "2026-10-05 17:30",
-      market_summary: {
-        taiex: 22850.32,
-        taiex_change: 185.45,
-        taiex_change_pct: 0.82,
-        market_volume: 3840.5
-      },
-      portfolio_summary: {
-        total_cost: 9250000,
-        total_market_value: 11485000,
-        total_unrealized_profit: 2235000,
-        total_unrealized_return_pct: 24.16,
-        today_profit: 142500,
-        today_return_pct: 1.25
+    // 崔董真實 7 檔持股資料主檔 (2026-10-05 盤後結算)
+    const initialPortfolio = {
+      as_of_date: "2026-10-05",
+      summary: {
+        total_market_value: 196485,
+        total_cost: 195514,
+        unrealized_pnl: 971,
+        return_rate: 0.005,
+        today_pnl: 6060,
+        win_rate: 0.714,
+        cr3: 66.0,
+        holdings_count: 7
       },
       holdings: [
         {
-          symbol: "2330",
-          name: "台積電",
-          shares: 5000,
-          avg_cost: 780.0,
-          current_price: 1015.0,
-          market_value: 5075000,
-          weight_pct: 44.19,
-          unrealized_profit: 1175000,
-          unrealized_return_pct: 30.13,
-          today_change: 15.0,
-          today_change_pct: 1.50,
-          sector: "半導體"
-        },
-        {
-          symbol: "2454",
-          name: "聯發科",
-          shares: 1500,
-          avg_cost: 1120.0,
-          current_price: 1290.0,
-          market_value: 1935000,
-          weight_pct: 16.85,
-          unrealized_profit: 255000,
-          unrealized_return_pct: 15.18,
-          today_change: 25.0,
-          today_change_pct: 1.98,
-          sector: "IC設計"
-        },
-        {
-          symbol: "2317",
-          name: "鴻海",
-          shares: 8000,
-          avg_cost: 165.0,
-          current_price: 198.5,
-          market_value: 1588000,
-          weight_pct: 13.83,
-          unrealized_profit: 268000,
-          unrealized_return_pct: 20.30,
-          today_change: -1.5,
-          today_change_pct: -0.75,
-          sector: "電子代工/AI伺服器"
-        },
-        {
-          symbol: "2382",
-          name: "廣達",
-          shares: 4000,
-          avg_cost: 245.0,
-          current_price: 285.0,
-          market_value: 1140000,
-          weight_pct: 9.93,
-          unrealized_profit: 160000,
-          unrealized_return_pct: 16.33,
-          today_change: 4.0,
-          today_change_pct: 1.42,
-          sector: "AI伺服器"
+          symbol: "6139",
+          ticker: "6139.TW",
+          name: "亞翔",
+          sector: "無塵室工程/半導體設備",
+          shares: 75,
+          cost_price: 890.13,
+          current_price: 790.0,
+          cost_amount: 66760,
+          today_pnl: 1125,
+          market_value: 59250,
+          pnl: -7510,
+          return_rate: -0.1125,
+          stop_loss_price: 801.12,
+          risk_status: "warning",
+          risk_flag: "🚨 跌破 -10% 硬性停損線 (-11.25%)",
+          weight: 0.3015
         },
         {
           symbol: "0050",
+          ticker: "0050.TW",
           name: "元大台灣50",
-          shares: 6000,
-          avg_cost: 155.0,
-          current_price: 181.5,
-          market_value: 1089000,
-          weight_pct: 9.48,
-          unrealized_profit: 159000,
-          unrealized_return_pct: 17.10,
-          today_change: 1.5,
-          today_change_pct: 0.83,
-          sector: "市值型ETF"
+          sector: "市值型ETF",
+          shares: 400,
+          cost_price: 107.1,
+          current_price: 115.95,
+          cost_amount: 42840,
+          today_pnl: 1260,
+          market_value: 46380,
+          pnl: 3540,
+          return_rate: 0.0826,
+          stop_loss_price: 96.39,
+          risk_status: "healthy",
+          risk_flag: "持股狀態正常",
+          weight: 0.236
         },
         {
-          symbol: "2881",
-          name: "富邦金",
-          shares: 7500,
-          avg_cost: 72.0,
-          current_price: 87.7,
-          market_value: 657750,
-          weight_pct: 5.73,
-          unrealized_profit: 117750,
-          unrealized_return_pct: 21.81,
-          today_change: 0.6,
-          today_change_pct: 0.69,
-          sector: "金融保險"
+          symbol: "2308",
+          ticker: "2308.TW",
+          name: "台達電",
+          sector: "AI電源/散熱/綠能",
+          shares: 12,
+          cost_price: 1857.67,
+          current_price: 2005.0,
+          cost_amount: 22292,
+          today_pnl: 1440,
+          market_value: 24060,
+          pnl: 1768,
+          return_rate: 0.0793,
+          stop_loss_price: 1671.9,
+          risk_status: "healthy",
+          risk_flag: "持股狀態正常",
+          weight: 0.1225
+        },
+        {
+          symbol: "6278",
+          ticker: "6278.TW",
+          name: "台表科",
+          sector: "SMT/光電板/PCB",
+          shares: 100,
+          cost_price: 216.12,
+          current_price: 220.0,
+          cost_amount: 21612,
+          today_pnl: 300,
+          market_value: 22000,
+          pnl: 388,
+          return_rate: 0.018,
+          stop_loss_price: 194.51,
+          risk_status: "healthy",
+          risk_flag: "持股狀態正常",
+          weight: 0.112
+        },
+        {
+          symbol: "3455",
+          ticker: "3455.TW",
+          name: "由田",
+          sector: "AOI光學檢測/先進封裝",
+          shares: 60,
+          cost_price: 250.7,
+          current_price: 283.5,
+          cost_amount: 15042,
+          today_pnl: 210,
+          market_value: 17010,
+          pnl: 1968,
+          return_rate: 0.1308,
+          stop_loss_price: 225.63,
+          risk_status: "strong",
+          risk_flag: "🔥 強勢獲利表現 (+13.08%)",
+          weight: 0.0866
+        },
+        {
+          symbol: "2313",
+          ticker: "2313.TW",
+          name: "華通",
+          sector: "低軌衛星/HDI板",
+          shares: 60,
+          cost_price: 250.2,
+          current_price: 248.5,
+          cost_amount: 15012,
+          today_pnl: 1350,
+          market_value: 14910,
+          pnl: -102,
+          return_rate: -0.0068,
+          stop_loss_price: 225.18,
+          risk_status: "healthy",
+          risk_flag: "持股狀態正常",
+          weight: 0.0759
+        },
+        {
+          symbol: "2330",
+          ticker: "2330.TW",
+          name: "台積電",
+          sector: "晶圓代工龍頭",
+          shares: 5,
+          cost_price: 2391.2,
+          current_price: 2575.0,
+          cost_amount: 11956,
+          today_pnl: 375,
+          market_value: 12875,
+          pnl: 919,
+          return_rate: 0.0769,
+          stop_loss_price: 2152.08,
+          risk_status: "healthy",
+          risk_flag: "持股狀態正常",
+          weight: 0.0655
         }
       ]
     };
 
-    function renderTable() {
+    let allocationChartInstance = null;
+    let returnChartInstance = null;
+
+    function formatNumber(num) {
+      return Number(num).toLocaleString('zh-TW');
+    }
+
+    function renderDashboard(data) {
+      // 1. KPI
+      document.getElementById('headerDate').innerText = `${data.as_of_date} 盤後`;
+      document.getElementById('kpiMarketValue').innerText = `NT$ ${formatNumber(data.summary.total_market_value)}`;
+      document.getElementById('kpiTotalCost').innerText = `NT$ ${formatNumber(data.summary.total_cost)}`;
+      
+      const unPnL = data.summary.unrealized_pnl;
+      const unPnLElem = document.getElementById('kpiUnrealizedPnL');
+      unPnLElem.innerText = `${unPnL >= 0 ? '+' : ''}NT$ ${formatNumber(unPnL)}`;
+      unPnLElem.className = `text-2xl sm:text-3xl font-extrabold mt-1 ${unPnL >= 0 ? 'stock-up' : 'stock-down'}`;
+
+      const retRate = (data.summary.return_rate * 100).toFixed(2);
+      const retRateElem = document.getElementById('kpiReturnRate');
+      retRateElem.innerText = `${retRate >= 0 ? '+' : ''}${retRate}%`;
+      retRateElem.className = `ml-1 font-bold ${retRate >= 0 ? 'stock-up' : 'stock-down'}`;
+
+      const todayPnL = data.summary.today_pnl;
+      const todayPnLElem = document.getElementById('kpiTodayPnL');
+      todayPnLElem.innerText = `${todayPnL >= 0 ? '+' : ''}NT$ ${formatNumber(todayPnL)}`;
+      todayPnLElem.className = `text-2xl sm:text-3xl font-extrabold mt-1 ${todayPnL >= 0 ? 'stock-up' : 'stock-down'}`;
+
+      // 2. Table
       const tbody = document.getElementById('holdingsTableBody');
       tbody.innerHTML = '';
-      portfolioData.holdings.forEach(h => {
-        const isUp = h.today_change >= 0;
-        const changeClass = isUp ? 'stock-up' : 'stock-down';
-        const changeSign = isUp ? '+' : '';
-        const profitUp = h.unrealized_profit >= 0;
-        const profitClass = profitUp ? 'stock-up' : 'stock-down';
-        const profitSign = profitUp ? '+' : '';
+
+      data.holdings.forEach(stock => {
+        const isUp = stock.pnl >= 0;
+        const pnlSign = isUp ? '+' : '';
+        const retSign = stock.return_rate >= 0 ? '+' : '';
+        const retPercent = (stock.return_rate * 100).toFixed(2);
+
+        let riskBadge = '';
+        if (stock.risk_status === 'warning') {
+          riskBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold badge-warning animate-pulse"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${stock.risk_flag}</span>`;
+        } else if (stock.risk_status === 'strong') {
+          riskBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold badge-success"><i class="fa-solid fa-fire mr-1"></i>${stock.risk_flag}</span>`;
+        } else {
+          riskBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-gray-400 bg-gray-800/60 border border-gray-700/60"><i class="fa-solid fa-check mr-1 text-emerald-400"></i>持股正常</span>`;
+        }
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-800/40 transition-colors border-b border-gray-800/40';
+        tr.className = "hover:bg-slate-800/40 transition";
         tr.innerHTML = `
-          <td class="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-            <span>${h.name}</span>
-            <span class="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-400 font-mono">${h.symbol}</span>
+          <td class="px-5 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-white">${stock.name}</span>
+              <span class="font-mono text-xs text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">${stock.symbol}</span>
+              ${stock.shares < 100 ? '<span class="text-[10px] text-amber-300 bg-amber-500/20 px-1 rounded">零股</span>' : ''}
+            </div>
           </td>
-          <td class="py-3.5 px-4 text-gray-400 text-xs">${h.sector}</td>
-          <td class="py-3.5 px-4 text-right font-mono">${h.shares.toLocaleString()}</td>
-          <td class="py-3.5 px-4 text-right font-mono text-gray-300">$${h.avg_cost.toFixed(1)}</td>
-          <td class="py-3.5 px-4 text-right font-mono font-bold text-white">$${h.current_price.toFixed(1)}</td>
-          <td class="py-3.5 px-4 text-right font-mono font-bold ${changeClass}">
-            ${changeSign}${h.today_change.toFixed(1)} (${changeSign}${h.today_change_pct.toFixed(2)}%)
+          <td class="px-4 py-4 whitespace-nowrap text-xs text-gray-400">${stock.sector}</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono text-gray-200">${formatNumber(stock.shares)} 股</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono text-gray-400">$${stock.cost_price.toFixed(2)}</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-semibold text-white">$${stock.current_price.toFixed(2)}</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-medium text-gray-200">NT$ ${formatNumber(stock.market_value)}</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono text-xs text-gray-300">${(stock.weight * 100).toFixed(2)}%</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-semibold ${isUp ? 'stock-up' : 'stock-down'}">
+            ${pnlSign}NT$ ${formatNumber(stock.pnl)}
           </td>
-          <td class="py-3.5 px-4 text-right font-mono font-bold text-white">NT$ ${h.market_value.toLocaleString()}</td>
-          <td class="py-3.5 px-4 text-right font-mono text-blue-400">${h.weight_pct}%</td>
-          <td class="py-3.5 px-4 text-right font-mono font-bold ${profitClass}">
-            ${profitSign}NT$ ${h.unrealized_profit.toLocaleString()}
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-bold ${stock.return_rate >= 0 ? 'stock-up' : 'stock-down'}">
+            ${retSign}${retPercent}%
           </td>
-          <td class="py-3.5 px-4 text-right font-mono font-bold ${profitClass}">
-            ${profitSign}${h.unrealized_return_pct.toFixed(2)}%
-          </td>
+          <td class="px-5 py-4 whitespace-nowrap text-center">${riskBadge}</td>
         `;
         tbody.appendChild(tr);
       });
+
+      // 3. Render Charts
+      renderCharts(data);
     }
 
-    let allocationChartInstance = null;
-
-    function initChart() {
-      const ctx = document.getElementById('allocationChart').getContext('2d');
-      const holdings = portfolioData.holdings;
-      
+    function renderCharts(data) {
       const colors = [
-        '#3b82f6', // 台積電 - 科技藍
-        '#8b5cf6', // 聯發科 - 曜石紫
-        '#ec4899', // 鴻海 - 霓虹粉
-        '#f59e0b', // 廣達 - 琥珀金
-        '#10b981', // 0050 - 翡翠綠
-        '#06b6d4'  // 富邦金 - 青瓷藍
+        '#3b82f6', // 亞翔 Blue
+        '#10b981', // 0050 Green
+        '#f59e0b', // 台達電 Amber
+        '#8b5cf6', // 台表科 Purple
+        '#ec4899', // 由田 Pink
+        '#06b6d4', // 華通 Cyan
+        '#64748b'  // 台積電 Slate
       ];
 
-      allocationChartInstance = new Chart(ctx, {
-        type: 'pie',
+      // Donut Chart: Asset Allocation
+      const ctxAlloc = document.getElementById('allocationChart').getContext('2d');
+      if (allocationChartInstance) allocationChartInstance.destroy();
+
+      allocationChartInstance = new Chart(ctxAlloc, {
+        type: 'doughnut',
         data: {
-          labels: holdings.map(h => `${h.name} (${h.symbol})`),
+          labels: data.holdings.map(h => `${h.name} (${(h.weight * 100).toFixed(1)}%)`),
           datasets: [{
-            label: '權重佔比',
-            data: holdings.map(h => h.weight_pct),
+            data: data.holdings.map(h => h.market_value),
             backgroundColor: colors,
-            borderColor: '#111827',
+            borderColor: '#0b0f19',
             borderWidth: 2,
-            hoverOffset: 12
+            hoverOffset: 6
           }]
         },
         options: {
@@ -433,21 +580,84 @@
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              display: false // 使用卡片下方自訂的精緻圖例
+              display: false
             },
             tooltip: {
               backgroundColor: 'rgba(15, 23, 42, 0.95)',
-              titleColor: '#ffffff',
-              titleFont: { weight: 'bold', size: 13 },
-              bodyColor: '#e5e7eb',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
+              titleColor: '#fff',
+              bodyColor: '#cbd5e1',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
               borderWidth: 1,
-              padding: 12,
-              boxPadding: 6,
               callbacks: {
                 label: function(context) {
-                  const h = holdings[context.dataIndex];
-                  return ` 佔比: ${context.raw}%  |  市值: NT$ ${h.market_value.toLocaleString()}`;
+                  const val = context.raw || 0;
+                  const total = data.summary.total_market_value;
+                  const pct = ((val / total) * 100).toFixed(2);
+                  return ` 市值: NT$ ${val.toLocaleString('zh-TW')} (${pct}%)`;
+                }
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+
+      // Bar Chart: Return Rates
+      const ctxRet = document.getElementById('returnRateChart').getContext('2d');
+      if (returnChartInstance) returnChartInstance.destroy();
+
+      // Sort by return rate descending for clear ranking
+      const sortedHoldings = [...data.holdings].sort((a, b) => b.return_rate - a.return_rate);
+
+      returnChartInstance = new Chart(ctxRet, {
+        type: 'bar',
+        data: {
+          labels: sortedHoldings.map(h => h.name),
+          datasets: [{
+            label: '未實現報酬率 (%)',
+            data: sortedHoldings.map(h => (h.return_rate * 100).toFixed(2)),
+            backgroundColor: sortedHoldings.map(h => h.return_rate >= 0 ? 'rgba(239, 68, 68, 0.85)' : 'rgba(16, 185, 129, 0.85)'),
+            borderColor: sortedHoldings.map(h => h.return_rate >= 0 ? '#ef4444' : '#10b981'),
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` 報酬率: ${context.raw}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(255, 255, 255, 0.05)'
+              },
+              ticks: {
+                color: '#94a3b8',
+                callback: function(val) {
+                  return val + '%';
+                }
+              }
+            },
+            y: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#e2e8f0',
+                font: {
+                  weight: '600'
                 }
               }
             }
@@ -456,18 +666,30 @@
       });
     }
 
-    function refreshData() {
-      const btn = event.currentTarget;
-      btn.classList.add('animate-spin');
-      setTimeout(() => {
-        btn.classList.remove('animate-spin');
-      }, 600);
+    // Try fetching remote portfolio.json dynamically; fall back to embedded initialPortfolio
+    async function loadPortfolio() {
+      try {
+        const response = await fetch('./portfolio.json');
+        if (response.ok) {
+          const remoteData = await response.json();
+          renderDashboard(remoteData);
+          return;
+        }
+      } catch (err) {
+        console.warn('Using embedded portfolio dataset:', err);
+      }
+      renderDashboard(initialPortfolio);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderTable();
-      initChart();
-    });
+    function refreshData() {
+      const btn = event.currentTarget;
+      btn.classList.add('opacity-75');
+      loadPortfolio().then(() => {
+        setTimeout(() => btn.classList.remove('opacity-75'), 400);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPortfolio);
   </script>
 </body>
 </html>

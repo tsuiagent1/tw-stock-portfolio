@@ -1,15 +1,15 @@
 {
-  "as_of_date": "2026-10-16",
+  "as_of_date": "2026-10-19",
   "market": "TW",
   "currency": "TWD",
   "summary": {
-    "total_market_value": 187445,
+    "total_market_value": 183955,
     "total_cost": 195514,
-    "unrealized_pnl": -8069,
-    "return_rate": -0.0413,
-    "today_pnl": 255,
+    "unrealized_pnl": -11559,
+    "return_rate": -0.0591,
+    "today_pnl": -3490,
     "win_rate": 0.571,
-    "cr3": 66.27,
+    "cr3": 66.29,
     "holdings_count": 7
   },
   "holdings": [
@@ -20,16 +20,16 @@
       "sector": "無塵室工程/半導體設備",
       "shares": 75,
       "cost_price": 890.13,
-      "current_price": 677.0,
+      "current_price": 663.0,
       "cost_amount": 66760,
-      "today_pnl": -975,
-      "market_value": 50775,
-      "pnl": -15985,
-      "return_rate": -0.2394,
+      "today_pnl": -1050,
+      "market_value": 49725,
+      "pnl": -17035,
+      "return_rate": -0.2552,
       "stop_loss_price": 801.12,
       "risk_status": "danger",
-      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-23.94%)",
-      "weight": 0.2709
+      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-25.52%)",
+      "weight": 0.2703
     },
     {
       "symbol": "0050",
@@ -38,16 +38,16 @@
       "sector": "市值型ETF",
       "shares": 400,
       "cost_price": 107.1,
-      "current_price": 109.0,
+      "current_price": 108.15,
       "cost_amount": 42840,
-      "today_pnl": 40,
-      "market_value": 43600,
-      "pnl": 760,
-      "return_rate": 0.0177,
+      "today_pnl": -340,
+      "market_value": 43260,
+      "pnl": 420,
+      "return_rate": 0.0098,
       "stop_loss_price": 96.39,
       "risk_status": "healthy",
       "risk_flag": "持股狀態正常",
-      "weight": 0.2326
+      "weight": 0.2352
     },
     {
       "symbol": "2308",
@@ -56,16 +56,16 @@
       "sector": "AI電源/散熱/綠能",
       "shares": 12,
       "cost_price": 1857.67,
-      "current_price": 1635.0,
+      "current_price": 1640.0,
       "cost_amount": 22292,
       "today_pnl": 60,
-      "market_value": 19620,
-      "pnl": -2672,
-      "return_rate": -0.1199,
+      "market_value": 19680,
+      "pnl": -2612,
+      "return_rate": -0.1172,
       "stop_loss_price": 1671.9,
       "risk_status": "warning",
-      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-11.99%)",
-      "weight": 0.1047
+      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-11.72%)",
+      "weight": 0.107
     },
     {
       "symbol": "6278",
@@ -74,16 +74,16 @@
       "sector": "SMT/光電板/PCB",
       "shares": 100,
       "cost_price": 216.12,
-      "current_price": 298.5,
+      "current_price": 289.5,
       "cost_amount": 21612,
-      "today_pnl": -450,
-      "market_value": 29850,
-      "pnl": 8238,
-      "return_rate": 0.3812,
+      "today_pnl": -900,
+      "market_value": 28950,
+      "pnl": 7338,
+      "return_rate": 0.3395,
       "stop_loss_price": 194.51,
       "risk_status": "strong",
-      "risk_flag": "🔥 強勢獲利表現 (+38.12%)",
-      "weight": 0.1592
+      "risk_flag": "🔥 強勢獲利表現 (+33.95%)",
+      "weight": 0.1574
     },
     {
       "symbol": "3455",
@@ -92,16 +92,16 @@
       "sector": "AOI光學檢測/先進封裝",
       "shares": 60,
       "cost_price": 250.7,
-      "current_price": 277.0,
+      "current_price": 256.0,
       "cost_amount": 15042,
-      "today_pnl": 480,
-      "market_value": 16620,
-      "pnl": 1578,
-      "return_rate": 0.1049,
+      "today_pnl": -1260,
+      "market_value": 15360,
+      "pnl": 318,
+      "return_rate": 0.0211,
       "stop_loss_price": 225.63,
-      "risk_status": "strong",
-      "risk_flag": "🔥 強勢獲利表現 (+10.49%)",
-      "weight": 0.0887
+      "risk_status": "healthy",
+      "risk_flag": "持股狀態正常",
+      "weight": 0.0835
     },
     {
       "symbol": "2313",
@@ -112,14 +112,14 @@
       "cost_price": 250.2,
       "current_price": 248.0,
       "cost_amount": 15012,
-      "today_pnl": 1200,
+      "today_pnl": 0,
       "market_value": 14880,
       "pnl": -132,
       "return_rate": -0.0088,
       "stop_loss_price": 225.18,
       "risk_status": "healthy",
       "risk_flag": "持股狀態正常",
-      "weight": 0.0794
+      "weight": 0.0809
     },
     {
       "symbol": "2330",
@@ -130,14 +130,14 @@
       "cost_price": 2391.2,
       "current_price": 2420.0,
       "cost_amount": 11956,
-      "today_pnl": -100,
+      "today_pnl": 0,
       "market_value": 12100,
       "pnl": 144,
       "return_rate": 0.012,
       "stop_loss_price": 2152.08,
       "risk_status": "healthy",
       "risk_flag": "持股狀態正常",
-      "weight": 0.0646
+      "weight": 0.0658
     }
   ]
 }

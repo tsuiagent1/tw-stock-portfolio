@@ -74,9 +74,9 @@
             <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">VIP 實盤</span>
           </div>
           <p class="text-xs text-gray-400 flex items-center gap-2 mt-0.5">
-            <span><i class="fa-regular fa-clock mr-1"></i>資料結算基準：<strong class="text-gray-200" id="headerDate">2026-11-12 庫存明細</strong></span>
+            <span><i class="fa-regular fa-clock mr-1"></i>資料結算基準：<strong class="text-gray-200" id="headerDate">2026-11-26 庫存明細</strong></span>
             <span class="text-gray-600">•</span>
-            <span class="text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1"></span>4 檔真實在庫</span>
+            <span class="text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1"></span><span id="headerCount">4 檔真實在庫</span></span>
           </p>
         </div>
       </div>
@@ -85,7 +85,7 @@
           <i class="fa-solid fa-user-shield text-blue-400"></i>
           <span>特助執行秘書：<strong>Frank</strong></span>
         </div>
-        <button onclick="refreshData()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition flex items-center gap-1.5 shadow-md shadow-blue-600/30">
+        <button onclick="refreshData(event)" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition flex items-center gap-1.5 shadow-md shadow-blue-600/30">
           <i class="fa-solid fa-rotate text-xs"></i>
           <span>重新整理</span>
         </button>
@@ -103,7 +103,7 @@
         <div class="flex justify-between items-start">
           <div>
             <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">總持股市值</p>
-            <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1" id="kpiMarketValue">NT$ 162,665</h3>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1" id="kpiMarketValue">NT$ 151,595</h3>
           </div>
           <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
             <i class="fa-solid fa-vault text-lg"></i>
@@ -111,7 +111,7 @@
         </div>
         <div class="mt-3 flex items-center text-xs text-gray-400">
           <span>投入成本：</span>
-          <span class="ml-1 font-semibold text-gray-200" id="kpiTotalCost">NT$ 202,432</span>
+          <span class="ml-1 font-semibold text-gray-200" id="kpiTotalCost">NT$ 202,433</span>
         </div>
       </div>
 
@@ -120,7 +120,7 @@
         <div class="flex justify-between items-start">
           <div>
             <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">累積未實現損益</p>
-            <h3 class="text-2xl sm:text-3xl font-extrabold stock-down mt-1" id="kpiUnrealizedPnL">-NT$ 40,444</h3>
+            <h3 class="text-2xl sm:text-3xl font-extrabold stock-down mt-1" id="kpiUnrealizedPnL">-NT$ 50,838</h3>
           </div>
           <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <i class="fa-solid fa-chart-pie text-lg"></i>
@@ -128,24 +128,26 @@
         </div>
         <div class="mt-3 flex items-center text-xs">
           <span class="text-gray-400">總報酬率：</span>
-          <span class="ml-1 font-bold stock-down" id="kpiReturnRate">-19.98%</span>
-          <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">綠字跌幅</span>
+          <span class="ml-1 font-bold stock-down" id="kpiReturnRate">-25.11%</span>
+          <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-gray-800 text-gray-300 border border-gray-700">紅漲綠跌</span>
         </div>
       </div>
 
-      <!-- Today PnL -->
-      <div class="glass-card p-5 relative overflow-hidden group hover:border-emerald-500/50 transition">
+      <!-- Today PnL & Daily Return Rate -->
+      <div class="glass-card p-5 relative overflow-hidden group hover:border-red-500/50 transition">
         <div class="flex justify-between items-start">
           <div>
-            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">持股狀態變動</p>
-            <h3 class="text-2xl sm:text-3xl font-extrabold stock-up mt-1" id="kpiTodayPnL">4 檔庫存</h3>
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">當日損益 / 漲跌幅</p>
+            <h3 class="text-2xl sm:text-3xl font-extrabold stock-up mt-1" id="kpiTodayPnL">+NT$ 6,910</h3>
           </div>
-          <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+          <div class="p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20" id="kpiTodayIconBox">
             <i class="fa-solid fa-arrow-trend-up text-lg"></i>
           </div>
         </div>
-        <div class="mt-3 flex items-center text-xs text-gray-400">
-          <span>更新自券商 App 最新庫存截圖</span>
+        <div class="mt-3 flex items-center text-xs">
+          <span class="text-gray-400">當日漲跌幅：</span>
+          <span class="ml-1 font-bold stock-up" id="kpiTodayReturnRate">+4.78%</span>
+          <span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 border border-red-500/30" id="kpiTodayBadge">紅字漲幅</span>
         </div>
       </div>
 
@@ -154,7 +156,7 @@
         <div class="flex justify-between items-start">
           <div>
             <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">持股檔數 / 勝率</p>
-            <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">4 檔 <span class="text-lg font-normal text-emerald-400">(25.0%)</span></h3>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1" id="kpiHoldingsWinRate">4 檔 <span class="text-lg font-normal text-emerald-400">(0.0%)</span></h3>
           </div>
           <div class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
             <i class="fa-solid fa-crosshairs text-lg"></i>
@@ -162,7 +164,7 @@
         </div>
         <div class="mt-3 flex items-center text-xs text-gray-400">
           <span>CR3 前三大集中度：</span>
-          <span class="ml-1 font-semibold text-gray-200">87.6%</span>
+          <span class="ml-1 font-semibold text-gray-200" id="kpiCr3">87.75%</span>
         </div>
       </div>
     </div>
@@ -179,10 +181,8 @@
               <h2 class="text-base font-bold text-white">持股即時風控與紀律通報</h2>
               <span class="px-2 py-0.5 text-xs rounded-full badge-warning font-semibold">硬性停損線 -10%</span>
             </div>
-            <p class="text-xs sm:text-sm text-gray-300 mt-1 leading-relaxed">
-              ⚠️ <strong class="text-red-400">亞翔 (6139)</strong> 現價 $605.00 跌破停損線 $801.12（未實現損益率 <span class="font-bold text-red-400">-32.33%</span>），觸發嚴重停損警戒。<br>
-              ⚠️ <strong class="text-red-400">台達電 (2308)</strong> 現價 $1240.00 跌破停損線 $1434.35（未實現損益率 <span class="font-bold text-red-400">-22.54%</span>），觸發停損警戒。<br>
-              ✨ <strong class="text-emerald-400">元大台灣50 (0050)</strong> 報酬率 <span class="font-bold text-emerald-400">+0.88%</span> 保持正報酬獲利；<strong class="text-gray-200">台積電 (2330)</strong> 報酬率 <span class="font-bold text-gray-300">-2.98%</span> 於正常波動區。
+            <p class="text-xs sm:text-sm text-gray-300 mt-1 leading-relaxed" id="riskAlertText">
+              載入即時風控狀態中...
             </p>
           </div>
         </div>
@@ -205,46 +205,49 @@
               <i class="fa-solid fa-chart-pie text-blue-400"></i>
               <h2 class="text-lg font-bold text-white">資產配置比例 (權重圓餅圖)</h2>
             </div>
-            <span class="text-xs text-gray-400">總計 4 檔真實部位</span>
+            <span class="text-xs text-gray-400" id="allocSubtitle">總計 4 檔真實部位</span>
           </div>
           <div class="relative h-64 flex items-center justify-center">
             <canvas id="allocationChart"></canvas>
           </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-800 grid grid-cols-2 gap-2 text-xs text-gray-400">
-          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] mr-2"></span>台達電 (38.12%)</div>
-          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6] mr-2"></span>亞翔 (27.90%)</div>
-          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#64748b] mr-2"></span>台積電 (21.58%)</div>
-          <div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-[#10b981] mr-2"></span>元大台灣50 (12.41%)</div>
+        <div class="mt-4 pt-4 border-t border-gray-800 grid grid-cols-2 gap-2 text-xs text-gray-400" id="allocationLegend">
+          <!-- Rendered by JS -->
         </div>
       </div>
 
-      <!-- Return Rate / PnL Bar Chart -->
+      <!-- Return Rate / Daily Change Bar Chart -->
       <div class="lg:col-span-7 glass-card p-6 flex flex-col justify-between">
         <div>
-          <div class="flex justify-between items-center mb-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
             <div class="flex items-center space-x-2">
               <i class="fa-solid fa-ranking-star text-indigo-400"></i>
-              <h2 class="text-lg font-bold text-white">持股未實現報酬率排行 (台股紅漲綠跌)</h2>
+              <h2 class="text-lg font-bold text-white" id="barChartTitle">持股當日漲跌幅排行 (台股紅漲綠跌)</h2>
             </div>
-            <span class="text-xs text-gray-400">基準線 0.0% / 警戒線 -10%</span>
+            <div class="inline-flex rounded-lg bg-gray-900/80 p-0.5 border border-gray-700/80 text-xs">
+              <button type="button" id="btnModeDaily" onclick="switchBarMode('daily')" class="px-2.5 py-1 rounded-md font-medium transition bg-blue-600 text-white">
+                當日漲跌幅
+              </button>
+              <button type="button" id="btnModeTotal" onclick="switchBarMode('total')" class="px-2.5 py-1 rounded-md font-medium transition text-gray-400 hover:text-white">
+                累積報酬率
+              </button>
+            </div>
           </div>
           <div class="relative h-64">
             <canvas id="returnRateChart"></canvas>
           </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between text-xs text-gray-400">
+        <div class="mt-4 pt-4 border-t border-gray-800 flex flex-wrap justify-between gap-2 text-xs text-gray-400">
           <div class="flex items-center gap-1.5">
             <span class="w-3 h-3 rounded bg-red-500/80 inline-block"></span>
-            <span>獲利標的 (台股紅)</span>
+            <span>上漲 / 獲利標的 (台股紅)</span>
           </div>
           <div class="flex items-center gap-1.5">
             <span class="w-3 h-3 rounded bg-emerald-500/80 inline-block"></span>
-            <span>虧損標的 (台股綠)</span>
+            <span>下跌 / 虧損標的 (台股綠)</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <span class="w-3 h-3 border-b-2 border-red-500 inline-block"></span>
-            <span>-10% 停損紅線</span>
+            <span class="text-gray-400" id="barChartHint">基準線 0.0%（依當日漲跌幅排序）</span>
           </div>
         </div>
       </div>
@@ -258,12 +261,12 @@
             <i class="fa-solid fa-table-list"></i>
           </div>
           <div>
-            <h2 class="text-lg font-bold text-white">崔董 4 檔真實庫存詳細明細</h2>
-            <p class="text-xs text-gray-400">根據最新券商 App 截圖資料維護</p>
+            <h2 class="text-lg font-bold text-white" id="tableTitle">崔董 4 檔真實庫存詳細明細</h2>
+            <p class="text-xs text-gray-400">含當日漲跌幅、當日損益與即時風控狀態</p>
           </div>
         </div>
         <div class="flex items-center gap-2 self-end sm:self-auto">
-          <span class="text-xs px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 border border-gray-700 font-mono">
+          <span class="text-xs px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 border border-gray-700 font-mono" id="tableCountBadge">
             COUNT: 4 STOCKS
           </span>
         </div>
@@ -279,6 +282,7 @@
               <th scope="col" class="px-4 py-3.5 font-semibold text-right">持股股數</th>
               <th scope="col" class="px-4 py-3.5 font-semibold text-right">成本價</th>
               <th scope="col" class="px-4 py-3.5 font-semibold text-right">當前現價</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold text-right">當日漲跌幅</th>
               <th scope="col" class="px-4 py-3.5 font-semibold text-right">持股市值</th>
               <th scope="col" class="px-4 py-3.5 font-semibold text-right">權重</th>
               <th scope="col" class="px-4 py-3.5 font-semibold text-right">未實現損益</th>
@@ -294,12 +298,13 @@
       <div class="p-4 border-t border-gray-800/80 bg-[#0d1322] flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-400">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span>資料與後端 portfolio.json 主檔 100% 同步相符</span>
+          <span>資料與後端 portfolio.json 主檔同步</span>
         </div>
-        <div class="flex gap-4">
-          <span>總成本：<strong class="text-gray-200">NT$ 202,432</strong></span>
-          <span>總市值：<strong class="text-gray-200">NT$ 162,665</strong></span>
-          <span>結算未實現損益：<strong class="stock-down font-bold">-NT$ 40,444 (-19.98%)</strong></span>
+        <div class="flex flex-wrap gap-4" id="tableFooterSummary">
+          <span>當日損益：<strong id="footerTodayPnL" class="stock-up font-bold">+NT$ 6,910 (+4.78%)</strong></span>
+          <span>總成本：<strong id="footerTotalCost" class="text-gray-200">NT$ 202,433</strong></span>
+          <span>總市值：<strong id="footerMarketValue" class="text-gray-200">NT$ 151,595</strong></span>
+          <span>結算未實現損益：<strong id="footerUnrealizedPnL" class="stock-down font-bold">-NT$ 50,838 (-25.11%)</strong></span>
         </div>
       </div>
     </div>
@@ -317,36 +322,20 @@
   <!-- Script to populate data & render charts -->
   <script>
     const initialPortfolio = {
-      as_of_date: "2026-11-12",
+      as_of_date: "2026-11-26",
+      market: "TW",
+      currency: "TWD",
       summary: {
-        total_market_value: 162665,
-        total_cost: 202432,
-        unrealized_pnl: -40444,
-        return_rate: -0.1998,
-        today_pnl: 0,
-        win_rate: 0.25,
-        cr3: 87.59,
+        total_market_value: 151595,
+        total_cost: 202433,
+        unrealized_pnl: -50838,
+        return_rate: -0.2511,
+        today_pnl: 6910,
+        win_rate: 0.0,
+        cr3: 87.75,
         holdings_count: 4
       },
       holdings: [
-        {
-          symbol: "2308",
-          ticker: "2308.TW",
-          name: "台達電",
-          sector: "AI電源/散熱/綠能",
-          shares: 50,
-          cost_price: 1593.72,
-          current_price: 1240.0,
-          cost_amount: 79686,
-          today_pnl: 0,
-          market_value: 62000,
-          pnl: -17960,
-          return_rate: -0.2254,
-          stop_loss_price: 1434.35,
-          risk_status: "danger",
-          risk_flag: "🚨 跌破 -10% 硬性停損線 (-22.54%)",
-          weight: 0.3812
-        },
         {
           symbol: "6139",
           ticker: "6139.TW",
@@ -354,16 +343,34 @@
           sector: "無塵室工程/半導體設備",
           shares: 75,
           cost_price: 890.13,
-          current_price: 605.0,
+          current_price: 598.0,
           cost_amount: 66760,
-          today_pnl: 0,
-          market_value: 45375,
-          pnl: -21585,
-          return_rate: -0.3233,
+          today_pnl: 3225,
+          market_value: 44850,
+          pnl: -21910,
+          return_rate: -0.3282,
           stop_loss_price: 801.12,
           risk_status: "danger",
-          risk_flag: "🚨 跌破 -10% 硬性停損線 (-32.33%)",
-          weight: 0.2790
+          risk_flag: "🚨 跌破 -10% 硬性停損線 (-32.82%)",
+          weight: 0.2959
+        },
+        {
+          symbol: "2308",
+          ticker: "2308.TW",
+          name: "台達電",
+          sector: "AI電源/散熱/綠能",
+          shares: 50,
+          cost_price: 1593.72,
+          current_price: 1120.0,
+          cost_amount: 79686,
+          today_pnl: 3250,
+          market_value: 56000,
+          pnl: -23686,
+          return_rate: -0.2972,
+          stop_loss_price: 1434.35,
+          risk_status: "danger",
+          risk_flag: "🚨 跌破 -10% 硬性停損線 (-29.72%)",
+          weight: 0.3694
         },
         {
           symbol: "2330",
@@ -372,16 +379,16 @@
           sector: "晶圓代工龍頭",
           shares: 15,
           cost_price: 2401.27,
-          current_price: 2340.0,
+          current_price: 2145.0,
           cost_amount: 36019,
-          today_pnl: 0,
-          market_value: 35100,
-          pnl: -1074,
-          return_rate: -0.0298,
+          today_pnl: -75,
+          market_value: 32175,
+          pnl: -3844,
+          return_rate: -0.1067,
           stop_loss_price: 2161.14,
-          risk_status: "healthy",
-          risk_flag: "持股狀態正常",
-          weight: 0.2158
+          risk_status: "warning",
+          risk_flag: "🚨 跌破 -10% 硬性停損線 (-10.67%)",
+          weight: 0.2122
         },
         {
           symbol: "0050",
@@ -390,50 +397,179 @@
           sector: "市值型ETF",
           shares: 200,
           cost_price: 99.84,
-          current_price: 100.95,
+          current_price: 92.85,
           cost_amount: 19968,
-          today_pnl: 0,
-          market_value: 20190,
-          pnl: 175,
-          return_rate: 0.0088,
+          today_pnl: 510,
+          market_value: 18570,
+          pnl: -1398,
+          return_rate: -0.07,
           stop_loss_price: 89.86,
           risk_status: "healthy",
           risk_flag: "持股狀態正常",
-          weight: 0.1241
+          weight: 0.1225
         }
       ]
     };
 
+    const chartColors = ['#f59e0b', '#3b82f6', '#64748b', '#10b981', '#8b5cf6', '#ec4899'];
     let allocationChartInstance = null;
     let returnChartInstance = null;
+    let currentPortfolioData = initialPortfolio;
+    let barChartMode = 'daily'; // 'daily' | 'total'
 
     function formatNumber(num) {
       return Number(num).toLocaleString('zh-TW');
     }
 
+    function formatSignedCurrency(num) {
+      const n = Number(num) || 0;
+      const absStr = formatNumber(Math.abs(Math.round(n)));
+      if (n > 0) return `+NT$ ${absStr}`;
+      if (n < 0) return `-NT$ ${absStr}`;
+      return `NT$ 0`;
+    }
+
+    function formatSignedPercent(rate) {
+      const pct = ((Number(rate) || 0) * 100).toFixed(2);
+      if (Number(pct) > 0) return `+${pct}%`;
+      return `${pct}%`;
+    }
+
+    function getStockDailyStats(stock) {
+      const todayPnl = Number(stock.today_pnl) || 0;
+      const marketValue = Number(stock.market_value) || 0;
+      const shares = Number(stock.shares) || 0;
+      const prevMarketValue = marketValue - todayPnl;
+
+      let changeRate = 0;
+      if (typeof stock.today_change_rate === 'number') {
+        changeRate = stock.today_change_rate;
+      } else if (prevMarketValue > 0) {
+        changeRate = todayPnl / prevMarketValue;
+      }
+
+      let priceChange = 0;
+      if (typeof stock.today_change === 'number') {
+        priceChange = stock.today_change;
+      } else if (shares > 0) {
+        priceChange = todayPnl / shares;
+      }
+
+      return { todayPnl, changeRate, priceChange };
+    }
+
+    function getPortfolioDailyRate(summary) {
+      if (typeof summary.today_return_rate === 'number') {
+        return summary.today_return_rate;
+      }
+      const todayPnl = Number(summary.today_pnl) || 0;
+      const marketValue = Number(summary.total_market_value) || 0;
+      const prevTotal = marketValue - todayPnl;
+      return prevTotal > 0 ? todayPnl / prevTotal : 0;
+    }
+
+    function renderRiskAlert(data) {
+      const container = document.getElementById('riskAlertText');
+      const lines = data.holdings.map(stock => {
+        const retPct = formatSignedPercent(stock.return_rate);
+        const daily = getStockDailyStats(stock);
+        const dailyPct = formatSignedPercent(daily.changeRate);
+        const dailyCls = daily.todayPnl > 0 ? 'text-red-400' : (daily.todayPnl < 0 ? 'text-emerald-400' : 'text-gray-300');
+
+        if (stock.risk_status === 'danger' || stock.risk_status === 'warning') {
+          return `⚠️ <strong class="text-red-400">${stock.name} (${stock.symbol})</strong> 現價 $${stock.current_price.toFixed(2)} 跌破停損線 $${stock.stop_loss_price.toFixed(2)}（未實現 <span class="font-bold text-red-400">${retPct}</span>｜當日 <span class="font-bold ${dailyCls}">${dailyPct}</span>），觸發停損警戒。`;
+        }
+        return `✨ <strong class="text-emerald-400">${stock.name} (${stock.symbol})</strong> 現價 $${stock.current_price.toFixed(2)}（未實現 <span class="font-bold text-gray-200">${retPct}</span>｜當日 <span class="font-bold ${dailyCls}">${dailyPct}</span>），於正常風控區間。`;
+      });
+      container.innerHTML = lines.join('<br>');
+    }
+
     function renderDashboard(data) {
+      currentPortfolioData = data;
+      const count = data.summary.holdings_count ?? data.holdings.length;
+
       document.getElementById('headerDate').innerText = `${data.as_of_date} 庫存明細`;
+      document.getElementById('headerCount').innerText = `${count} 檔真實在庫`;
+      document.getElementById('tableTitle').innerText = `崔董 ${count} 檔真實庫存詳細明細`;
+      document.getElementById('tableCountBadge').innerText = `COUNT: ${count} STOCKS`;
+      document.getElementById('allocSubtitle').innerText = `總計 ${count} 檔真實部位`;
+
       document.getElementById('kpiMarketValue').innerText = `NT$ ${formatNumber(data.summary.total_market_value)}`;
       document.getElementById('kpiTotalCost').innerText = `NT$ ${formatNumber(data.summary.total_cost)}`;
-      
+
+      // Unrealized PnL
       const unPnL = data.summary.unrealized_pnl;
       const unPnLElem = document.getElementById('kpiUnrealizedPnL');
-      unPnLElem.innerText = `${unPnL >= 0 ? '+' : ''}NT$ ${formatNumber(unPnL)}`;
+      unPnLElem.innerText = formatSignedCurrency(unPnL);
       unPnLElem.className = `text-2xl sm:text-3xl font-extrabold mt-1 ${unPnL >= 0 ? 'stock-up' : 'stock-down'}`;
 
-      const retRate = (data.summary.return_rate * 100).toFixed(2);
       const retRateElem = document.getElementById('kpiReturnRate');
-      retRateElem.innerText = `${retRate >= 0 ? '+' : ''}${retRate}%`;
-      retRateElem.className = `ml-1 font-bold ${retRate >= 0 ? 'stock-up' : 'stock-down'}`;
+      retRateElem.innerText = formatSignedPercent(data.summary.return_rate);
+      retRateElem.className = `ml-1 font-bold ${data.summary.return_rate >= 0 ? 'stock-up' : 'stock-down'}`;
 
+      // Today PnL & Return Rate
+      const todayPnl = Number(data.summary.today_pnl) || 0;
+      const todayRate = getPortfolioDailyRate(data.summary);
+      const isTodayUp = todayPnl > 0;
+      const isTodayDown = todayPnl < 0;
+      const todayColorClass = isTodayUp ? 'stock-up' : (isTodayDown ? 'stock-down' : 'text-gray-200');
+
+      const todayPnLElem = document.getElementById('kpiTodayPnL');
+      todayPnLElem.innerText = formatSignedCurrency(todayPnl);
+      todayPnLElem.className = `text-2xl sm:text-3xl font-extrabold mt-1 ${todayColorClass}`;
+
+      const todayRateElem = document.getElementById('kpiTodayReturnRate');
+      todayRateElem.innerText = formatSignedPercent(todayRate);
+      todayRateElem.className = `ml-1 font-bold ${todayColorClass}`;
+
+      const todayBadge = document.getElementById('kpiTodayBadge');
+      const todayIconBox = document.getElementById('kpiTodayIconBox');
+      if (isTodayUp) {
+        todayBadge.innerText = '紅字漲幅';
+        todayBadge.className = 'ml-2 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 border border-red-500/30';
+        todayIconBox.className = 'p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20';
+        todayIconBox.innerHTML = '<i class="fa-solid fa-arrow-trend-up text-lg"></i>';
+      } else if (isTodayDown) {
+        todayBadge.innerText = '綠字跌幅';
+        todayBadge.className = 'ml-2 px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        todayIconBox.className = 'p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        todayIconBox.innerHTML = '<i class="fa-solid fa-arrow-trend-down text-lg"></i>';
+      } else {
+        todayBadge.innerText = '平盤無波動';
+        todayBadge.className = 'ml-2 px-1.5 py-0.5 rounded text-[10px] bg-gray-800 text-gray-300 border border-gray-700';
+        todayIconBox.className = 'p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20';
+        todayIconBox.innerHTML = '<i class="fa-solid fa-minus text-lg"></i>';
+      }
+
+      // Win Rate & CR3
+      const winRatePct = ((Number(data.summary.win_rate) || 0) * 100).toFixed(1);
+      document.getElementById('kpiHoldingsWinRate').innerHTML = `${count} 檔 <span class="text-lg font-normal text-emerald-400">(${winRatePct}%)</span>`;
+      document.getElementById('kpiCr3').innerText = `${Number(data.summary.cr3 || 0).toFixed(2)}%`;
+
+      // Risk Alert
+      renderRiskAlert(data);
+
+      // Table Footer Summary
+      const footerTodayElem = document.getElementById('footerTodayPnL');
+      footerTodayElem.innerText = `${formatSignedCurrency(todayPnl)} (${formatSignedPercent(todayRate)})`;
+      footerTodayElem.className = `font-bold ${todayColorClass}`;
+      document.getElementById('footerTotalCost').innerText = `NT$ ${formatNumber(data.summary.total_cost)}`;
+      document.getElementById('footerMarketValue').innerText = `NT$ ${formatNumber(data.summary.total_market_value)}`;
+      const footerUnElem = document.getElementById('footerUnrealizedPnL');
+      footerUnElem.innerText = `${formatSignedCurrency(unPnL)} (${formatSignedPercent(data.summary.return_rate)})`;
+      footerUnElem.className = `font-bold ${unPnL >= 0 ? 'stock-up' : 'stock-down'}`;
+
+      // Holdings Table Rows
       const tbody = document.getElementById('holdingsTableBody');
       tbody.innerHTML = '';
 
       data.holdings.forEach(stock => {
         const isUp = stock.pnl >= 0;
-        const pnlSign = isUp ? '+' : '';
-        const retSign = stock.return_rate >= 0 ? '+' : '';
-        const retPercent = (stock.return_rate * 100).toFixed(2);
+        const daily = getStockDailyStats(stock);
+        const dailyCls = daily.todayPnl > 0 ? 'stock-up' : (daily.todayPnl < 0 ? 'stock-down' : 'text-gray-300');
+        const priceChgSign = daily.priceChange > 0 ? '+' : '';
+        const dailyRateStr = formatSignedPercent(daily.changeRate);
+        const dailyPnlStr = formatSignedCurrency(daily.todayPnl);
 
         let riskBadge = '';
         if (stock.risk_status === 'danger' || stock.risk_status === 'warning') {
@@ -458,25 +594,113 @@
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono text-gray-200">${formatNumber(stock.shares)} 股</td>
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono text-gray-400">$${stock.cost_price.toFixed(2)}</td>
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-semibold text-white">$${stock.current_price.toFixed(2)}</td>
+          <td class="px-4 py-4 whitespace-nowrap text-right font-mono">
+            <div class="font-bold ${dailyCls}">${dailyRateStr}</div>
+            <div class="text-[11px] ${dailyCls} opacity-80">${priceChgSign}${daily.priceChange.toFixed(2)} / ${dailyPnlStr}</div>
+          </td>
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-medium text-gray-200">NT$ ${formatNumber(stock.market_value)}</td>
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono text-xs text-gray-300">${(stock.weight * 100).toFixed(2)}%</td>
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-semibold ${isUp ? 'stock-up' : 'stock-down'}">
-            ${pnlSign}NT$ ${formatNumber(stock.pnl)}
+            ${formatSignedCurrency(stock.pnl)}
           </td>
           <td class="px-4 py-4 whitespace-nowrap text-right font-mono font-bold ${stock.return_rate >= 0 ? 'stock-up' : 'stock-down'}">
-            ${retSign}${retPercent}%
+            ${formatSignedPercent(stock.return_rate)}
           </td>
           <td class="px-5 py-4 whitespace-nowrap text-center">${riskBadge}</td>
         `;
         tbody.appendChild(tr);
       });
 
+      // Allocation Legend
+      const legendContainer = document.getElementById('allocationLegend');
+      legendContainer.innerHTML = data.holdings.map((h, idx) => {
+        const color = chartColors[idx % chartColors.length];
+        return `<div class="flex items-center"><span class="w-2.5 h-2.5 rounded-full mr-2 flex-shrink-0" style="background-color: ${color};"></span>${h.name} (${(h.weight * 100).toFixed(2)}%)</div>`;
+      }).join('');
+
       renderCharts(data);
     }
 
-    function renderCharts(data) {
-      const colors = ['#f59e0b', '#3b82f6', '#64748b', '#10b981'];
+    function switchBarMode(mode) {
+      barChartMode = mode;
+      const btnDaily = document.getElementById('btnModeDaily');
+      const btnTotal = document.getElementById('btnModeTotal');
+      const title = document.getElementById('barChartTitle');
+      const hint = document.getElementById('barChartHint');
 
+      if (mode === 'daily') {
+        btnDaily.className = 'px-2.5 py-1 rounded-md font-medium transition bg-blue-600 text-white';
+        btnTotal.className = 'px-2.5 py-1 rounded-md font-medium transition text-gray-400 hover:text-white';
+        title.innerText = '持股當日漲跌幅排行 (台股紅漲綠跌)';
+        hint.innerText = '基準線 0.0%（依當日漲跌幅排序）';
+      } else {
+        btnTotal.className = 'px-2.5 py-1 rounded-md font-medium transition bg-blue-600 text-white';
+        btnDaily.className = 'px-2.5 py-1 rounded-md font-medium transition text-gray-400 hover:text-white';
+        title.innerText = '持股未實現報酬率排行 (台股紅漲綠跌)';
+        hint.innerText = '基準線 0.0% / 警戒線 -10%';
+      }
+      renderBarChart(currentPortfolioData);
+    }
+
+    function renderBarChart(data) {
+      const ctxRet = document.getElementById('returnRateChart').getContext('2d');
+      if (returnChartInstance) returnChartInstance.destroy();
+
+      const items = data.holdings.map(h => {
+        const daily = getStockDailyStats(h);
+        const rate = barChartMode === 'daily' ? daily.changeRate : h.return_rate;
+        return { name: h.name, rate };
+      }).sort((a, b) => b.rate - a.rate);
+
+      const labelText = barChartMode === 'daily' ? '當日漲跌幅' : '未實現報酬率';
+
+      returnChartInstance = new Chart(ctxRet, {
+        type: 'bar',
+        data: {
+          labels: items.map(i => i.name),
+          datasets: [{
+            label: `${labelText} (%)`,
+            data: items.map(i => (i.rate * 100).toFixed(2)),
+            backgroundColor: items.map(i => i.rate >= 0 ? 'rgba(239, 68, 68, 0.85)' : 'rgba(16, 185, 129, 0.85)'),
+            borderColor: items.map(i => i.rate >= 0 ? '#ef4444' : '#10b981'),
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = Number(context.raw);
+                  const sign = val > 0 ? '+' : '';
+                  return ` ${labelText}: ${sign}${val.toFixed(2)}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: {
+                color: '#94a3b8',
+                callback: function(val) { return val + '%'; }
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#e2e8f0', font: { weight: '600' } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderCharts(data) {
       const ctxAlloc = document.getElementById('allocationChart').getContext('2d');
       if (allocationChartInstance) allocationChartInstance.destroy();
 
@@ -486,7 +710,7 @@
           labels: data.holdings.map(h => `${h.name} (${(h.weight * 100).toFixed(1)}%)`),
           datasets: [{
             data: data.holdings.map(h => h.market_value),
-            backgroundColor: colors,
+            backgroundColor: data.holdings.map((_, idx) => chartColors[idx % chartColors.length]),
             borderColor: '#0b0f19',
             borderWidth: 2,
             hoverOffset: 6
@@ -517,58 +741,12 @@
         }
       });
 
-      const ctxRet = document.getElementById('returnRateChart').getContext('2d');
-      if (returnChartInstance) returnChartInstance.destroy();
-
-      const sortedHoldings = [...data.holdings].sort((a, b) => b.return_rate - a.return_rate);
-
-      returnChartInstance = new Chart(ctxRet, {
-        type: 'bar',
-        data: {
-          labels: sortedHoldings.map(h => h.name),
-          datasets: [{
-            label: '未實現報酬率 (%)',
-            data: sortedHoldings.map(h => (h.return_rate * 100).toFixed(2)),
-            backgroundColor: sortedHoldings.map(h => h.return_rate >= 0 ? 'rgba(239, 68, 68, 0.85)' : 'rgba(16, 185, 129, 0.85)'),
-            borderColor: sortedHoldings.map(h => h.return_rate >= 0 ? '#ef4444' : '#10b981'),
-            borderWidth: 1,
-            borderRadius: 6
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return ` 報酬率: ${context.raw}%`;
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: 'rgba(255, 255, 255, 0.05)' },
-              ticks: {
-                color: '#94a3b8',
-                callback: function(val) { return val + '%'; }
-              }
-            },
-            y: {
-              grid: { display: false },
-              ticks: { color: '#e2e8f0', font: { weight: '600' } }
-            }
-          }
-        }
-      });
+      renderBarChart(data);
     }
 
     async function loadPortfolio() {
       try {
-        const response = await fetch('./portfolio.json');
+        const response = await fetch(`./portfolio.json?t=${Date.now()}`, { cache: 'no-store' });
         if (response.ok) {
           const remoteData = await response.json();
           renderDashboard(remoteData);
@@ -580,11 +758,11 @@
       renderDashboard(initialPortfolio);
     }
 
-    function refreshData() {
-      const btn = event.currentTarget;
-      btn.classList.add('opacity-75');
+    function refreshData(evt) {
+      const btn = evt ? evt.currentTarget : null;
+      if (btn) btn.classList.add('opacity-75');
       loadPortfolio().then(() => {
-        setTimeout(() => btn.classList.remove('opacity-75'), 400);
+        if (btn) setTimeout(() => btn.classList.remove('opacity-75'), 400);
       });
     }
 

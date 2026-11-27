@@ -1,15 +1,15 @@
 {
-  "as_of_date": "2026-11-26",
+  "as_of_date": "2026-11-27",
   "market": "TW",
   "currency": "TWD",
   "summary": {
-    "total_market_value": 151595,
+    "total_market_value": 152205,
     "total_cost": 202433,
-    "unrealized_pnl": -50838,
-    "return_rate": -0.2511,
-    "today_pnl": 6910,
+    "unrealized_pnl": -50228,
+    "return_rate": -0.2481,
+    "today_pnl": 610,
     "win_rate": 0.0,
-    "cr3": 87.75,
+    "cr3": 87.86,
     "holdings_count": 4
   },
   "holdings": [
@@ -20,16 +20,16 @@
       "sector": "無塵室工程/半導體設備",
       "shares": 75,
       "cost_price": 890.13,
-      "current_price": 598.0,
+      "current_price": 597.0,
       "cost_amount": 66760,
-      "today_pnl": 3225,
-      "market_value": 44850,
-      "pnl": -21910,
-      "return_rate": -0.3282,
+      "today_pnl": -75,
+      "market_value": 44775,
+      "pnl": -21985,
+      "return_rate": -0.3293,
       "stop_loss_price": 801.12,
       "risk_status": "danger",
-      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-32.82%)",
-      "weight": 0.2959
+      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-32.93%)",
+      "weight": 0.2942
     },
     {
       "symbol": "2308",
@@ -38,16 +38,16 @@
       "sector": "AI電源/散熱/綠能",
       "shares": 50,
       "cost_price": 1593.72,
-      "current_price": 1120.0,
+      "current_price": 1125.0,
       "cost_amount": 79686,
-      "today_pnl": 3250,
-      "market_value": 56000,
-      "pnl": -23686,
-      "return_rate": -0.2972,
+      "today_pnl": 250,
+      "market_value": 56250,
+      "pnl": -23436,
+      "return_rate": -0.2941,
       "stop_loss_price": 1434.35,
       "risk_status": "danger",
-      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-29.72%)",
-      "weight": 0.3694
+      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-29.41%)",
+      "weight": 0.3696
     },
     {
       "symbol": "2330",
@@ -56,16 +56,16 @@
       "sector": "晶圓代工龍頭",
       "shares": 15,
       "cost_price": 2401.27,
-      "current_price": 2145.0,
+      "current_price": 2180.0,
       "cost_amount": 36019,
-      "today_pnl": -75,
-      "market_value": 32175,
-      "pnl": -3844,
-      "return_rate": -0.1067,
+      "today_pnl": 525,
+      "market_value": 32700,
+      "pnl": -3319,
+      "return_rate": -0.0921,
       "stop_loss_price": 2161.14,
-      "risk_status": "warning",
-      "risk_flag": "🚨 跌破 -10% 硬性停損線 (-10.67%)",
-      "weight": 0.2122
+      "risk_status": "healthy",
+      "risk_flag": "持股狀態正常",
+      "weight": 0.2148
     },
     {
       "symbol": "0050",
@@ -74,16 +74,16 @@
       "sector": "市值型ETF",
       "shares": 200,
       "cost_price": 99.84,
-      "current_price": 92.85,
+      "current_price": 92.4,
       "cost_amount": 19968,
-      "today_pnl": 510,
-      "market_value": 18570,
-      "pnl": -1398,
-      "return_rate": -0.07,
+      "today_pnl": -90,
+      "market_value": 18480,
+      "pnl": -1488,
+      "return_rate": -0.0745,
       "stop_loss_price": 89.86,
       "risk_status": "healthy",
       "risk_flag": "持股狀態正常",
-      "weight": 0.1225
+      "weight": 0.1214
     }
   ]
 }
